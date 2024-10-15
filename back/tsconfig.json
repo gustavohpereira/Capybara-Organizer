@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2021",                                
+    "lib": ["es5", "es6", "dom"],                      
+    "experimentalDecorators": true,                    
+    "emitDecoratorMetadata": true,                     
+  
+    /* Modules */
+    "module": "CommonJS",                              
+    "rootDir": "./src",                                
+    "moduleResolution": "node",                       
+    "baseUrl": "./",                                  
+    "paths": {
+      "*": ["src/*"]
+    },
+    "typeRoots": ["node_modules/@types"],              /* Inclua o caminho para os tipos padrão */  
+    "types": ["jest"],                                 
+    "outDir": "./dist",                                
+    "esModuleInterop": true,                           
+    "forceConsistentCasingInFileNames": true,          
+  
+    /* Type Checking */
+    "strict": true,                                   
+    "skipLibCheck": true                              
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],         /* Inclua a pasta onde seus testes estão */
+  "exclude": ["node_modules"]                         /* Exclua a pasta node_modules para evitar conflitos */
+}
