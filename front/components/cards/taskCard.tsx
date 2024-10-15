@@ -8,6 +8,27 @@ type TaskCardProps = {
 };
 
 export default function TaskCard(props: TaskCardProps) {
+
+  const handleTaskDelete = async () => {
+    const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
+
+    if(!isConfirmed) {
+      return;
+    }
+
+    const response = await fetch(`http://localhost:8080/task/${props.task.id}`, {
+      method: 'DELETE',
+    });
+
+    if(response.ok) {
+      window.location.reload();
+    }
+
+  }
+
+
+
+
   return (
     <Draggable draggableId={props.task.id.toString()} key={props.task.id.toString()} index={props.index}>
 
@@ -27,8 +48,12 @@ export default function TaskCard(props: TaskCardProps) {
             cursor: "move",
           }}
         >
+          <div className="w-full flex justify-end">
+            <button onClick={handleTaskDelete} className="mt-2 font-light text-red-500" >remover</button>
+          </div>
           <h3 className="font-bold text-xl">{props.task.title}</h3>
           <p className="mt-2 font-light">{props.task.description}</p>
+
         </div>
       )}
     </Draggable>

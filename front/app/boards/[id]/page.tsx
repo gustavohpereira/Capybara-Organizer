@@ -4,6 +4,8 @@ import axios from "axios";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Column } from "@/components/boardColumn";
 import { Task } from "@/types";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+import AddTaskModal from "@/components/modal/addTaskModal";
 
 interface Board {
   id: string;
@@ -13,11 +15,13 @@ interface Board {
 
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [columns, setColumns] = useState<{ [key: string]: any }>({
     todo: { name: 'A fazer', id: 'todo', list: [] },
     doing: { name: 'Em progresso', id: 'doing', list: [] },
     done: { name: 'Finalizado', id: 'done', list: [] }
   });
+
 
   async function fetchBoardInfo() {
     const response = await axios.get(`http://localhost:8080/board/${params.id}`);
@@ -54,7 +58,7 @@ export default function BoardPage({ params }: any) {
               .sort((a: Task, b: Task) => a.list_index - b.list_index) || [],
           },
         };
-        
+
         setColumns(initialColumns);
 
       } catch (error) {
@@ -132,13 +136,34 @@ export default function BoardPage({ params }: any) {
   if (!board) return <div>Loading...</div>;
 
 
-  console.log(columns)
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-col items-center w-full h-full ">
-        <div className="title-wrapper">
-          <h2 className="project-name">{board.title}</h2>
+       {isModalOpen && (
+          <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+            <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id}  />
+          </div>
+        )}
+      <div className="flex flex-col items-start p-8 w-full h-full ">
+        <div className="flex justify-start">
+          <h2 className="text-4xl font-bold">{board.title}</h2>
         </div>
+        <button
+          onClick={openModal}
+          className="bg-teal-500 my-8 p-2 rounded-md text-white hover:text-black">
+          Criar Tarefa
+        </button>
+
+       
+
+
         <hr />
         <div className="flex justify-center gap-10 overflow-x-auto w-full  p-6">
           {Object.values(columns).map((col) => (
