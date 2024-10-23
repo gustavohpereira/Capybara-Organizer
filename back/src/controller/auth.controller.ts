@@ -22,11 +22,11 @@ export class AuthController {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    
+    console.log(user)
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: '1h',
+      expiresIn: '8h',
     });
-
+    
     res.json({ token });
   }
 }

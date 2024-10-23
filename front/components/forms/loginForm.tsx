@@ -5,9 +5,13 @@ import { useForm } from 'react-hook-form';
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    function onSubmit(data: any) {
-        console.log("data",data)
-        login(data);
+     async function onSubmit(data: any) {
+        const token =  await login(data);
+        if(token){
+            window.location.replace('/home');    
+
+        }
+
     }
 
     return (

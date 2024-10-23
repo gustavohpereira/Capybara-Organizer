@@ -12,7 +12,7 @@ export class BoardService {
 
 
     async getAllBoards(): Promise<Board[]> {
-        return this.boardRepository.find({ relations: ['tasks', 'user', 'members'] });
+        return this.boardRepository.find({ relations: ['tasks', 'user', 'members'], order: { createdAt: 'ASC' } });
     }
 
     async getBoardById(id: number): Promise<Board | null> {

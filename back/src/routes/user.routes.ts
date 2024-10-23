@@ -16,9 +16,8 @@ userRoutes.get('/', async (req, res) => {
     await userController.getAllUsers(req, res);
 });
 
-userRoutes.get('/:id', async (req, res) => {
+userRoutes.get('/getUser', async (req, res) => {
     await userController.getUserById(req, res)
-
 });
 
 userRoutes.post('/', async (req, res) => {

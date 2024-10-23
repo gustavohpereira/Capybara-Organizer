@@ -17,6 +17,7 @@ export class BoardController {
   }
 
   async getBoardById(req: Request, res: Response) {
+    console.log(req.params.id)
     const board = await this.boardService.getBoardById(Number(req.params.id));
     if (board) {
       res.json(board);

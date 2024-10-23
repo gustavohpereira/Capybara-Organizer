@@ -37,5 +37,5 @@ app.get('/', async (req, res) => {
 app.use('/task', taskRouter)
 app.use('/user', userRoutes)
 app.use('/auth', authRoutes);
-app.use('/Board',boardRouter)
+app.use('/board',boardRouter)
 

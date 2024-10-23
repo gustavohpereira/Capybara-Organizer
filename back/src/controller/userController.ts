@@ -1,24 +1,61 @@
+// src/controller/userController.ts
+
 import { Request, Response } from 'express';
-import { UserService } from 'service/user.service';
+import { UserService } from '../service/user.service';
+import jwt, { JwtPayload } from 'jsonwebtoken';  // Importa o jsonwebtoken
 
 
+interface CustomJwtPayload extends JwtPayload {
+  userId: number;
+}
 
 export class UserController {
+  public constructor(private readonly userService: UserService) { }
 
-  public constructor(
-    private readonly userService: UserService
-){}
   async getAllUsers(req: Request, res: Response) {
     const users = await this.userService.getAllUsers();
     res.json(users);
   }
 
+  // Modifica o getUserById para pegar o usuário pelo JWT
   async getUserById(req: Request, res: Response) {
-    const user = await this.userService.getUserById(Number(req.params.id));
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: 'User not found' });
+    try {
+      // Extrai o token JWT do header de autorização
+      const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+      console.log(token)
+
+      if (!token) {
+        return res.status(401).json({ message: 'Token não fornecido' });
+      }
+
+      // Decodifica o token JWT
+      const secret = process.env.JWT_SECRET
+
+      if (secret === undefined) {
+        throw new Error('JWT_SECRET not defined');
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as CustomJwtPayload;
+
+      // Verifica se o token decodificado contém a propriedade userId
+      if (!decoded.userId) {
+        return res.status(403).json({ message: 'Token inválido: ID de usuário não encontrado' });
+      }
+
+
+      console.log('ID do usuário decodificado:', decoded.userId);
+      
+      const user = await this.userService.getUserById(decoded?.userId);
+
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).json({ message: 'Usuário não encontrado' });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      return res.status(403).json({ message: 'Token inválido ou expirado' });
     }
   }
 
@@ -32,7 +69,7 @@ export class UserController {
     if (user) {
       res.json(user);
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'Usuário não encontrado' });
     }
   }
 

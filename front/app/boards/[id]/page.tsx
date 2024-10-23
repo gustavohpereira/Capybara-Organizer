@@ -4,8 +4,8 @@ import axios from "axios";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Column } from "@/components/boardColumn";
 import { Task } from "@/types";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 import AddTaskModal from "@/components/modal/addTaskModal";
+import { CiEdit } from "react-icons/ci";
 
 interface Board {
   id: string;
@@ -16,6 +16,8 @@ interface Board {
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // Estado de edição
+  const [editedTitle, setEditedTitle] = useState(""); // Estado para armazenar o título editado
   const [columns, setColumns] = useState<{ [key: string]: any }>({
     todo: { name: 'A fazer', id: 'todo', list: [] },
     doing: { name: 'Em progresso', id: 'doing', list: [] },
@@ -70,6 +72,17 @@ export default function BoardPage({ params }: any) {
   }, []);
 
 
+  async function attBoard(newTitle: string) {
+    try {
+      const response = await axios.put(`http://localhost:8080/board/${params.id}`, {
+        title: newTitle
+      });
+      setBoard(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   async function att_tasks(tasks: Task[]) {
     try {
@@ -110,7 +123,6 @@ export default function BoardPage({ params }: any) {
         [start.id]: { ...start, list: newList }
       }));
     } else {
-      console.log("moveno colunas", source, destination)
       const startList = [...start.list];
       const [movedItem] = startList.splice(source.index, 1);
 
@@ -136,6 +148,27 @@ export default function BoardPage({ params }: any) {
   if (!board) return <div>Loading...</div>;
 
 
+  const handleTitleEdit = () => {
+    setIsEditing(true); // Ativa o modo de edição
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedTitle(e.target.value); // Atualiza o título enquanto digita
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditing(false); // Sai do modo de edição
+    if (editedTitle !== board?.title) {
+      attBoard(editedTitle); // Atualiza o título no back-end
+    }
+  };
+
+  const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setIsEditing(false); // Sai do modo de edição quando pressionar Enter
+      attBoard(editedTitle); // Atualiza o título no back-end
+    }
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -146,22 +179,37 @@ export default function BoardPage({ params }: any) {
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-       {isModalOpen && (
-          <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-            <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id}  />
-          </div>
-        )}
-      <div className="flex flex-col items-start p-8 w-full h-full ">
-        <div className="flex justify-start">
-          <h2 className="text-4xl font-bold">{board.title}</h2>
+      {isModalOpen && (
+        <div className='absolute top-[50%] left-[50%]  w-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+          <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id} />
+        </div>
+      )}
+      <div className="flex flex-col items-start p-6 w-full h-full ">
+        <div className="flex justify-start gap-4 items-center">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyPress={handleTitleKeyPress}
+              className="border border-gray-300 p-2 text-4xl font-bold"
+              autoFocus
+            />
+          ) : (
+            <div className="pl-6 flex gap-4 items-center">
+              <h2 className="text-4xl font-bold">{board.title}</h2>
+              <CiEdit size={30} className="hover:text-teal-500 cursor-pointer" onClick={handleTitleEdit} />
+            </div>
+          )}
         </div>
         <button
           onClick={openModal}
-          className="bg-teal-500 my-8 p-2 rounded-md text-white hover:text-black">
+          className="bg-teal-500 my-8 ml-6 p-2 rounded-md text-white hover:text-black">
           Criar Tarefa
         </button>
 
-       
+
 
 
         <hr />
