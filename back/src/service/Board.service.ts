@@ -3,6 +3,8 @@ import { User } from 'entity/user.entity';
 import { getRepository } from 'typeorm';
 import { Repository } from "typeorm/repository/Repository"
 
+
+type UserWithoutPassword = Omit<User, 'password'>;
 export class BoardService {
 
     public constructor(
@@ -11,15 +13,35 @@ export class BoardService {
     ) { }
 
 
-    async getAllBoards(): Promise<Board[]> {
-        return this.boardRepository.find({ relations: ['tasks', 'user', 'members'], order: { createdAt: 'ASC' } });
-    }
 
+
+    async getAllBoards(): Promise<Board[]> {
+        return this.boardRepository.find({
+            relations: ['tasks', 'user', 'members'],
+            order: { createdAt: 'ASC' },
+            select: {
+                user: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    createdAt: true,
+                    role: true,
+                },
+                members: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    createdAt: true,
+                    role: true,
+                },
+            },
+        });
+    }
     async getBoardById(id: number): Promise<Board | null> {
         return this.boardRepository.findOne({ relations: ['tasks', 'user', 'members'], where: { id: id } });
     }
 
-    async createBoard(boardData: Partial<Board>, user: User): Promise<Board> {
+    async createBoard(boardData: Partial<Board>, user: Omit<User, 'password'>): Promise<Board> {
         const board = this.boardRepository.create({ ...boardData, user });
         return this.boardRepository.save(board);
     }

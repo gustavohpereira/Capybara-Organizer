@@ -5,9 +5,11 @@ import { Router } from 'express';
 import appDataSource from '../data-source';
 import { UserService } from '../service/user.service';
 import { UserController } from '../controller/userController';
+import { Board } from '../entity/Board';
 
 const userRepository = appDataSource.getRepository(User);
-const userService = new UserService(userRepository);
+const boardRepository = appDataSource.getRepository(Board);
+const userService = new UserService(userRepository, boardRepository);
 const userController = new UserController(userService);
 const userRoutes = Router();
 

@@ -1,14 +1,18 @@
 import { login } from '@/functions/authFunctions';
+import { useAuth } from '@/Providers/AuthProvider';
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
+
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const { login } = useAuth();  // Usando o login do contexto de autenticação
 
-     async function onSubmit(data: any) {
-        const token =  await login(data);
+     async function onSubmit({ email, password }: any) {
+        const token =  await login({ email, password });
         if(token){
-            window.location.replace('/home');    
+            // window.location.replace('/home');    
 
         }
 

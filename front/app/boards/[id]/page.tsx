@@ -26,7 +26,7 @@ export default function BoardPage({ params }: any) {
 
 
   async function fetchBoardInfo() {
-    const response = await axios.get(`http://localhost:8080/board/${params.id}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/board/${params.id}`);
     return response.data;
   }
 
@@ -74,7 +74,7 @@ export default function BoardPage({ params }: any) {
 
   async function attBoard(newTitle: string) {
     try {
-      const response = await axios.put(`http://localhost:8080/board/${params.id}`, {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/board/${params.id}`, {
         title: newTitle
       });
       setBoard(response.data);
@@ -89,7 +89,7 @@ export default function BoardPage({ params }: any) {
       console.log("tasks para atualizar", tasks)
       const updateTasksPromises = tasks.map(async (task) => {
         const response = await axios.put(
-          `http://localhost:8080/task/${task.id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/task/${task.id}`,
           task
         );
         console.log('Data sent successfully for task with ID', task.id, ':', response.data);
@@ -180,9 +180,9 @@ export default function BoardPage({ params }: any) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       {isModalOpen && (
-        <div className='absolute top-[50%] left-[50%]  w-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-          <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id} />
-        </div>
+
+        <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id} />
+
       )}
       <div className="flex flex-col items-start p-6 w-full h-full ">
         <div className="flex justify-start gap-4 items-center">

@@ -12,7 +12,7 @@ const boardService = new BoardService(
     appDataSource.getRepository(Board),
     appDataSource.getRepository(User)
 );
-const userService = new UserService(appDataSource.getRepository(User));
+const userService = new UserService(appDataSource.getRepository(User), appDataSource.getRepository(Board));
 const boardController = new BoardController(boardService, userService);
 
 

@@ -3,23 +3,16 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-const DB_TYPE: any = process.env.DB_TYPE;
-const DB_HOST: any = process.env.DB_HOST;
-const DB_PORT: any = process.env.DB_PORT;
-const DB_USERNAME: any = process.env.DB_USERNAME;
-const DB_PASSWORD: any = process.env.DB_PASSWORD;
-const DB_NAME: any = process.env.DB_NAME;
+const DATABASE_URL = process.env.DATABASE_URL;
+
+
 console.log(`${__dirname}/entitity/*.{ts,js}`)
 const appDataSource = new DataSource({
-    type: DB_TYPE,
-    host: DB_HOST,
-    port: DB_PORT,
-    username: DB_USERNAME,
-    password: DB_PASSWORD,
-    database: DB_NAME,
+    type: 'postgres', // Defina explicitamente o tipo do banco de dados
+    url: DATABASE_URL, // Use a URL de conexão do PostgreSQL
     entities: [`${__dirname}/entity/*.{ts,js}`],
     migrations: [`${__dirname}/migrations/*.{ts,js}`],
-    synchronize: true
+    synchronize: true,
 });
 
 export default appDataSource;

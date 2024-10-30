@@ -2,20 +2,36 @@ import { Repository } from 'typeorm/repository/Repository';
 
 import bcrypt from 'bcrypt';
 import { User } from 'entity/user.entity';
+import { Board } from 'entity/Board';
 
 export class UserService {
 
     public constructor(
-        private userRepository : Repository<User>
-    ) {}
-    
+        private userRepository: Repository<User>,
+        private boardRepository: Repository<Board>
+    ) { }
+
 
     async getAllUsers(): Promise<User[]> {
-        return this.userRepository.find();
+        return this.userRepository.find({
+            relations: ['boards'],
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                createdAt: true,
+                role: true
+            },
+        });
     }
 
-    async getUserById(id: number): Promise<User | null> {
-        return this.userRepository.findOneBy({ id: id });
+    async getUserById(id: number): Promise<Omit<User, 'password'> | null> {
+        const user = await this.userRepository.findOneBy({ id: id });
+        if (user) {
+            const { password, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        }
+        return null;
     }
 
     getUserByEmail(email: string): Promise<User | null> {
@@ -41,7 +57,23 @@ export class UserService {
     }
 
     async deleteUser(id: number): Promise<void> {
-        await this.userRepository.delete(id);
-    }
+        // Carregar o usuário com suas boards e os membros
+        const user = await this.userRepository.findOne({
+            where: { id: id },
+            relations: ['boards', 'boards.members'] // Carregar membros das boards
+        });
 
+        if (user) {
+            // Remover o usuário das boards
+            user.boards.forEach(board => {
+                board.members = board.members.filter(member => member.id !== id);
+            });
+
+            // Salvar as mudanças nas boards
+            await this.boardRepository.save(user.boards);
+
+            // Agora você pode excluir o usuário
+            await this.userRepository.delete(id);
+        }
+    }
 }

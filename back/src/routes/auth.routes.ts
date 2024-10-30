@@ -4,10 +4,11 @@ import appDataSource from '../data-source';
 import { User } from '../entity/user.entity';
 import { Router } from 'express';
 import { UserService } from '../service/user.service';
+import { Board } from '../entity/Board';
 
 const router = Router();
 
-const userService = new UserService(appDataSource.getRepository(User));
+const userService = new UserService(appDataSource.getRepository(User), appDataSource.getRepository(Board));
 const authController = new AuthController(userService);
 
 router.post('/login', async (req, res) => {

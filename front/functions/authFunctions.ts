@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 export async function login({ email, password }: { email: string; password: string }) {
     try {
-        const response = await axios.post('http://localhost:8080/auth/login', { email, password });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password });
         if (response.status === 200 && response.data.token) {
             console.log('Login successful', response.data.token);
             console.log(response.data.token)
@@ -20,9 +20,8 @@ export async function login({ email, password }: { email: string; password: stri
 
 export async function getUserInfo(token: string) {
     try {
-        console.log(token)
         if (token) {
-            const response = await axios.get('http://localhost:8080/user/getUser', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

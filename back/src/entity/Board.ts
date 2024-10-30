@@ -19,8 +19,8 @@ export class Board {
 
   @OneToMany(() => Task, (task) => task.board)
   tasks!: Task[];
-  
-  @ManyToMany(() => User)
+
+  @ManyToMany(() => User, (user) => user.boards )
   @JoinTable()
   members!: User[];
 }

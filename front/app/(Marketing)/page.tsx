@@ -4,8 +4,10 @@ import RegisterForm from "@/components/forms/registerForm"
 import Image from "next/image"
 import { useState } from "react"
 
+
 export default function MarketingPage() {
     const [formMode, setFormMode] = useState('login')
+    
 
     return (
         <div className="flex">

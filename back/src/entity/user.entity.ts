@@ -18,7 +18,7 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
   
-  @ManyToMany(() => Board, (board) => board.members)
+  @ManyToMany(() => Board, (board) => board.members, { cascade: true })
   boards!: Board[];
 
   @Column()
