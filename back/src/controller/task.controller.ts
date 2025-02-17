@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { TaskService } from 'service/task.service';
 
 export class TaskController {
-    public constructor(
-        private readonly taskService: TaskService
-    ) {}
+  public constructor(
+    private readonly taskService: TaskService
+  ) { }
   async getAllTasks(req: Request, res: Response) {
     const tasks = await this.taskService.getAllTasks();
     res.json(tasks);
@@ -25,5 +25,23 @@ export class TaskController {
   async deleteTask(req: Request, res: Response) {
     await this.taskService.deleteTask(Number(req.params.id));
     res.status(204).send();
+  }
+
+  async addMemberToTask(req: Request, res: Response) {
+    const task = await this.taskService.addUserToTask(req.body.taskId, req.body.userId);
+    if (task) {
+      res.json(task);
+    } else {
+      res.status(404).json({ message: 'Task or user not found' });
+    }
+  }
+
+  async removeMemberFromTask(req: Request, res: Response) {
+    const task = await this.taskService.deleteUserFromTask(req.body.taskId, req.body.userId);
+    if (task) {
+      res.json(task);
+    } else {
+      res.status(404).json({ message: 'Task or user not found' });
+    }
   }
 }

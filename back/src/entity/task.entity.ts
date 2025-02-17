@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { Board } from './Board';
+import { User } from './user.entity';
 
 @Entity()
 export class Task {
@@ -20,6 +21,10 @@ export class Task {
 
   @ManyToOne(() => Board, (board) => board.tasks, { onDelete: 'CASCADE' })
   board!: Board;
+
+  @ManyToMany(() => User, (user) => user.tasks, { cascade: true })
+  @JoinTable() 
+  users!: User[];
 
   @Column( { default: 0 } )
   list_index!: number

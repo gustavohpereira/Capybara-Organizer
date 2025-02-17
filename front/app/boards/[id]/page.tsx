@@ -6,11 +6,14 @@ import { Column } from "@/components/boardColumn";
 import { Task } from "@/types";
 import AddTaskModal from "@/components/modal/addTaskModal";
 import { CiEdit } from "react-icons/ci";
+import { FaPlus, FaUsers } from "react-icons/fa6";
+import { table } from "console";
 
 interface Board {
   id: string;
   title: string;
   tasks: Task[];
+  members: any[];
 }
 
 export default function BoardPage({ params }: any) {
@@ -86,7 +89,6 @@ export default function BoardPage({ params }: any) {
 
   async function att_tasks(tasks: Task[]) {
     try {
-      console.log("tasks para atualizar", tasks)
       const updateTasksPromises = tasks.map(async (task) => {
         const response = await axios.put(
           `${process.env.NEXT_PUBLIC_API_URL}/task/${task.id}`,
@@ -177,6 +179,9 @@ export default function BoardPage({ params }: any) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+
+  console.log(board);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       {isModalOpen && (
@@ -185,7 +190,7 @@ export default function BoardPage({ params }: any) {
 
       )}
       <div className="flex flex-col items-start p-6 w-full h-full ">
-        <div className="flex justify-start gap-4 items-center">
+        <div className="flex justify-start gap-4 items-start">
           {isEditing ? (
             <input
               type="text"
@@ -202,6 +207,22 @@ export default function BoardPage({ params }: any) {
               <CiEdit size={30} className="hover:text-teal-500 cursor-pointer" onClick={handleTitleEdit} />
             </div>
           )}
+
+          <div className="flex flex-col items-start ml-64 gap-4">
+            <div className="flex gap-4 items-center ">
+              <FaUsers size={30} />
+              <h1 className="text-4xl font-bold">Membros</h1>
+              <button className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-1 px-4 rounded">
+                <FaPlus size={26} />
+              </button>
+            </div>
+            {board.members.map((member) => (
+              <div key={member.id} className="flex items-center gap-4">
+                <li className="text-md font-bold">{member.name} ({member.role})	</li>
+              </div>
+            ))}
+          </div>
+
         </div>
         <button
           onClick={openModal}

@@ -1,5 +1,7 @@
 import { Task } from "@/types";
+import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import DetailTaskModal from "../modal/detailTaskModal";
 
 type TaskCardProps = {
   text: string
@@ -8,6 +10,7 @@ type TaskCardProps = {
 };
 
 export default function TaskCard(props: TaskCardProps) {
+  const [openModal, setOpenModal] = useState(false);
 
   const handleTaskDelete = async () => {
     const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
@@ -26,14 +29,17 @@ export default function TaskCard(props: TaskCardProps) {
 
   }
 
-
-
+  const handleTaskClick = ()=> {
+    setOpenModal(true);
+  }
 
   return (
+    <>
     <Draggable draggableId={props.task.id.toString()} key={props.task.id.toString()} index={props.index}>
-
+      
       {(provided, snapshot) => (
         <div
+          onClick={handleTaskClick}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -57,5 +63,7 @@ export default function TaskCard(props: TaskCardProps) {
         </div>
       )}
     </Draggable>
+    {openModal && <DetailTaskModal taskData={props.task}  closeModal={() => setOpenModal(false)} />} 
+    </>
   );
 }

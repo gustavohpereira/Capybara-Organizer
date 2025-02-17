@@ -3,6 +3,9 @@
 import { Request, Response } from 'express';
 import { UserService } from '../service/user.service';
 import jwt, { JwtPayload } from 'jsonwebtoken';  // Importa o jsonwebtoken
+import { TaskService } from 'service/task.service';
+import { BoardService } from 'service/Board.service';
+import { User } from 'entity/user.entity';
 
 
 interface CustomJwtPayload extends JwtPayload {
@@ -10,7 +13,7 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 export class UserController {
-  public constructor(private readonly userService: UserService) { }
+  public constructor(private readonly userService: UserService, private readonly taskService: TaskService, private readonly boardService: BoardService) { }
 
   async getAllUsers(req: Request, res: Response) {
     const users = await this.userService.getAllUsers();
@@ -45,7 +48,7 @@ export class UserController {
 
 
       console.log('ID do usuário decodificado:', decoded.userId);
-      
+
       const user = await this.userService.getUserById(decoded?.userId);
 
       if (user) {
@@ -74,7 +77,46 @@ export class UserController {
   }
 
   async deleteUser(req: Request, res: Response) {
-    await this.userService.deleteUser(Number(req.params.id));
-    res.status(204).send();
+    const userId = Number(req.params.id);
+
+    // Verificar se o usuário existe
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    console.log('Usuário encontrado:', user);
+
+    try {
+      this.removeUserFromTask(user);
+
+      // Deletar o usuário
+      await this.userService.deleteUser(userId);
+      console.log(`Usuário ${userId} excluído com sucesso.`);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error(`Erro ao excluir usuário ${userId}:`, error.message);
+      res.status(500).json({ message: 'Erro interno ao tentar excluir o usuário.' });
+    }
   }
+
+
+
+  async removeUserFromTask(user: Omit<User, "password">) {
+    try {
+      // Remover o usuário das tasks
+      if (user.tasks.length > 0) {
+        await Promise.all(
+          user.tasks.map(async (task) => {
+            console.log(`Removendo usuário ${user.id} da task ${task.id}`);
+            await this.taskService.deleteUserFromTask(task.id, user.id);
+          })
+        );
+      }
+    }
+    catch (error: any) {
+      console.error(`Erro ao excluir hete ${user.id}:`, error.message);
+
+    }
+  } 
 }

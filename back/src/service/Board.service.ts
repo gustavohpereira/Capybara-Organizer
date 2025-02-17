@@ -17,10 +17,10 @@ export class BoardService {
 
     async getAllBoards(): Promise<Board[]> {
         return this.boardRepository.find({
-            relations: ['tasks', 'user', 'members'],
+            relations: ['tasks', 'admin', 'members'],
             order: { createdAt: 'ASC' },
             select: {
-                user: {
+                admin: {
                     id: true,
                     name: true,
                     email: true,
@@ -38,11 +38,11 @@ export class BoardService {
         });
     }
     async getBoardById(id: number): Promise<Board | null> {
-        return this.boardRepository.findOne({ relations: ['tasks', 'user', 'members'], where: { id: id } });
+        return this.boardRepository.findOne({ relations: ['tasks', 'admin', 'members'], where: { id: id } });
     }
 
     async createBoard(boardData: Partial<Board>, user: Omit<User, 'password'>): Promise<Board> {
-        const board = this.boardRepository.create({ ...boardData, user });
+        const board = this.boardRepository.create({ ...boardData, admin: user });
         return this.boardRepository.save(board);
     }
 

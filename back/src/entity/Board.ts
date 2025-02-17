@@ -1,4 +1,3 @@
-// src/entities/board.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from './user.entity';
@@ -14,13 +13,16 @@ export class Board {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.boards)
-  user!: User;
+  // Usuário administrador da board
+  @ManyToOne(() => User, (user) => user.adminBoards, { nullable: true })
+  admin!: User | null;
 
+  // Tasks associadas à board
   @OneToMany(() => Task, (task) => task.board)
   tasks!: Task[];
 
-  @ManyToMany(() => User, (user) => user.boards )
+  // Membros da board
+  @ManyToMany(() => User, (user) => user.boards)
   @JoinTable()
   members!: User[];
 }

@@ -23,7 +23,7 @@ export default function HomeHeader() {
     }
     
     return (
-        <div className="w-full flex justify-between border-b-2 border-gray-300 p-4 items-center">
+        <div className="w-full flex sticky top-0 bg-white justify-between border-b-2 border-gray-300 p-4 items-center">
             <div className=" flex justify-start items-center">
 
                 <Link href={"/home"} className="text-xl font-bold">
