@@ -16,8 +16,8 @@ const cors = require("cors");
 app.use(Express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: 'http://localhost:3000',
-    method: ['GET', 'POST', 'PUT', 'DELETE'], // Substitua pela origem do seu front-end
+    origin: ['http://localhost:3000', 'https://project-gerenciador.vercel.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Substitua pela origem do seu front-end
 }))
 
 
