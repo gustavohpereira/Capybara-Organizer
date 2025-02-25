@@ -41,7 +41,6 @@ export default function AdminPage() {
         window.location.href = "/";
     }
 
-    console.log(users);
     return (
         <div className="p-8">
             <div className="my-8 ">

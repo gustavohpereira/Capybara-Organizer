@@ -21,8 +21,12 @@ export class TaskService {
   }
 
   async updateTask(id: number, taskData: Partial<Task>): Promise<Task | null> {
-    await this.taskRepository.update(id, taskData);
-    return this.taskRepository.findOneBy({ id: id });
+    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users'] });
+    if (!task) {
+      return null;
+    }
+    Object.assign(task, taskData);
+    return this.taskRepository.save(task);
   }
 
   async deleteTask(id: number): Promise<void> {
@@ -43,7 +47,6 @@ export class TaskService {
       return null;
     }
 
-    console.log(task, user)
 
     task.users.push(user);
     return this.taskRepository.save(task);

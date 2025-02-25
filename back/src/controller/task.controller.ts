@@ -17,7 +17,6 @@ export class TaskController {
   }
 
   async updateTask(req: Request, res: Response) {
-    console.log("atualizando", req.body)
     const task = await this.taskService.updateTask(Number(req.params.id), req.body);
     res.json(task);
   }

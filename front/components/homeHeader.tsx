@@ -23,7 +23,7 @@ export default function HomeHeader() {
     }
     
     return (
-        <div className="w-full flex sticky top-0 bg-white justify-between border-b-2 border-gray-300 p-4 items-center">
+        <div className="w-full flex sticky top-0 bg-teal-500 justify-between border-b-2 p-4 items-center">
             <div className=" flex justify-start items-center">
 
                 <Link href={"/home"} className="text-xl font-bold">
@@ -31,8 +31,8 @@ export default function HomeHeader() {
                 </Link>
                 <div className=" gap-6 flex">
 
-                    <Link href={"/home"} className="text-xl font-bold hover:text-teal-500">Home</Link>
-                    {user?.role === "admin" && <Link href={"/admin"} className="text-xl font-bold hover:text-teal-500">Admin</Link>}
+                    <Link href={"/home"} className="text-xl font-bold text-white">Home</Link>
+                    {user?.role === "admin" && <Link href={"/admin"} className="text-xl font-bold text-white">Admin</Link>}
                 </div>
             </div>
             <div>

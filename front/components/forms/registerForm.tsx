@@ -13,7 +13,6 @@ export default function RegisterForm() {
             return alert('As senhas precisam ser iguais');
         }
 
-        console.log({ email, password, confirmPassword ,name});
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/`, {name, email, password, confirmPassword, role: "user" });
             console.log(process.env.NEXT_PUBLIC_API_URL)

@@ -38,7 +38,10 @@ export class BoardService {
         });
     }
     async getBoardById(id: number): Promise<Board | null> {
-        return this.boardRepository.findOne({ relations: ['tasks', 'admin', 'members'], where: { id: id } });
+        return this.boardRepository.findOne({
+            relations: ['tasks', 'tasks.users', 'admin', 'members'],
+            where: { id: id }
+        });
     }
 
     async createBoard(boardData: Partial<Board>, user: Omit<User, 'password'>): Promise<Board> {
@@ -59,6 +62,7 @@ export class BoardService {
         const user = await this.userRepository.findOneBy({ id: userId });
 
         if (board && user) {
+            user.role = 'member';
             board.members.push(user);
             return this.boardRepository.save(board);
         }

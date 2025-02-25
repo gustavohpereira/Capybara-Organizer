@@ -7,9 +7,12 @@ import { Task } from "@/types";
 interface IDetailTaskProps {
   taskData: Task;
   closeModal: () => void;
+  boardMembers: any[];
 }
 
-export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskProps) {
+export default function DetailTaskModal({ closeModal, taskData, boardMembers }: IDetailTaskProps) {
+
+  const [isAddingMember, setIsAddingMember] = useState(false);
   const [editedTitle, setEditedTitle] = useState(taskData.title);
   const [editedDescription, setEditedDescription] = useState(taskData.description);
 
@@ -18,6 +21,25 @@ export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskPro
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+
+  async function addMemberToTask(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const userId = formData.get('member');
+
+    const data = {
+      taskId: taskData.id,
+      userId: userId
+    }
+
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/task/addMember`, data);
+    console.log('Data sent successfully:', response.data);
+
+    closeModal();
+    window.location.reload();
+  }
 
   async function att_tasks(tasks: Task) {
     setIsSaving(true);
@@ -41,9 +63,9 @@ export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskPro
 
   return (
     <div className="fixed inset-0 flex items-start justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-slate-200 rounded-xl mt-12 w-full max-w-4xl flex flex-col justify-start items-start border border-slate-500 p-4 md:p-6">
+      <div className="bg-slate-200 rounded-xl mt-12 w-full max-w-4xl flex flex-col justify-start items-start border border-slate-500 ">
         {/* Modal Header */}
-        <div className="flex justify-between w-full border-b border-slate-500 pb-4">
+        <div className="flex justify-between w-full border-b border-slate-500 pb-4 p-4">
           <h3 className="font-medium text-lg md:text-xl">Inspecionar Tarefa</h3>
           <button
             aria-label="Fechar modal"
@@ -55,7 +77,7 @@ export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskPro
         </div>
 
         {/* Modal Body */}
-        <div className="w-full flex flex-col justify-start items-center mb-4">
+        <div className="w-full flex flex-col justify-start items-center mb-4 p-4">
           <section className="text-start w-full">
             <div className="pt-4 flex gap-4 items-center">
               {isEditing ? (
@@ -98,15 +120,36 @@ export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskPro
               <div className="flex items-center gap-2">
                 <FaUsers size={25} />
                 <h1 className="text-xl">Membros da tarefa</h1>
+                <button className="text-teal-500 hover:text-teal-600" onClick={() => setIsAddingMember(true)} >
+                  <FaPlus size={20} />
+                </button>
               </div>
 
-              <button
-                className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-1 px-4 rounded"
-                aria-label="Adicionar Membro"
-              >
-                <FaPlus size={20} />
-                <h2 className="text-md">Adicionar Membro</h2>
-              </button>
+              <ul className="ml-8 list-disc text-gray-700">
+                {taskData.users?.map((member: any, index: number) => (
+                  <li key={index}>{member.name}</li>
+                ))}
+
+                {isAddingMember && (
+                  <form onSubmit={addMemberToTask} className="flex gap-2 items-center">
+                    <select className="border border-gray-300 p-2 text-lg w-full rounded-md" name="member" id="member">
+                      <option value="">Selecione um usuário</option>
+                      {boardMembers.map((member: any) => (
+                        <option key={member.id} value={member.id}>
+                          {member.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2" type="submit">
+                      adicionar
+                    </button>
+                    <button className=" py-2 px-4 rounded mt-2" type="submit" onClick={() => setIsAddingMember(false)}>
+                      cancelar
+                    </button>
+                  </form>
+                )}
+              </ul>
             </div>
           </section>
         </div>
@@ -150,16 +193,22 @@ export default function DetailTaskModal({ closeModal, taskData }: IDetailTaskPro
               </button>
             )}
           </div>
-          <button
-            className="text-red-500 hover:text-red-600"
-            onClick={() => {
-              if (confirm("Tem certeza de que deseja remover esta tarefa?")) {
-                // Lógica de remoção
-              }
-            }}
-          >
-            Remover
-          </button>
+          {
+            isEditing == false && (
+
+
+              <button
+                className="text-red-500 hover:text-red-600"
+                onClick={() => {
+                  if (confirm("Tem certeza de que deseja remover esta tarefa?")) {
+                    // Lógica de remoção
+                  }
+                }}
+              >
+                Remover
+              </button>
+            )
+          }
         </div>
 
         {isSaving && <p className="text-gray-500 text-center">Salvando...</p>}

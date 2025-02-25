@@ -26,7 +26,7 @@ export class UserController {
       // Extrai o token JWT do header de autorização
       const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
-      console.log(token)
+
 
       if (!token) {
         return res.status(401).json({ message: 'Token não fornecido' });
@@ -85,7 +85,6 @@ export class UserController {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
-    console.log('Usuário encontrado:', user);
 
     try {
       this.removeUserFromTask(user);

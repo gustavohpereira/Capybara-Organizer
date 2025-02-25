@@ -7,6 +7,7 @@ type TaskCardProps = {
   text: string
   index: number
   task: Task
+  members: any[]
 };
 
 export default function TaskCard(props: TaskCardProps) {
@@ -46,13 +47,11 @@ export default function TaskCard(props: TaskCardProps) {
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.5 : 1,
-            padding: "16px",
             margin: "8px 0",
-            backgroundColor: "#fff",
             border: "1px solid #ddd",
-            borderRadius: "4px",
             cursor: "move",
           }}
+          className="shadow-md rounded-lg bg-white p-4 w-full"
         >
           <div className="w-full flex justify-end">
             <button onClick={handleTaskDelete} className="mt-2 font-light text-red-500" >remover</button>
@@ -63,7 +62,7 @@ export default function TaskCard(props: TaskCardProps) {
         </div>
       )}
     </Draggable>
-    {openModal && <DetailTaskModal taskData={props.task}  closeModal={() => setOpenModal(false)} />} 
+    {openModal && <DetailTaskModal taskData={props.task}  closeModal={() => setOpenModal(false)} boardMembers={props.members} />} 
     </>
   );
 }

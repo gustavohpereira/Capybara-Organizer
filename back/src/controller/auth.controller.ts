@@ -10,7 +10,6 @@ export class AuthController {
     ) {}
     
   async login(req: Request, res: Response) {
-    console.log(req.body)
     const { email, password } = req.body;
     const user = await this.userService.getUserByEmail(email);
 
@@ -22,7 +21,6 @@ export class AuthController {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    console.log(user)
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
       expiresIn: '8h',
     });

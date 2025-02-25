@@ -8,17 +8,23 @@ import AddTaskModal from "@/components/modal/addTaskModal";
 import { CiEdit } from "react-icons/ci";
 import { FaPlus, FaUsers } from "react-icons/fa6";
 import { table } from "console";
+import AddTaskMemberModal from "@/components/modal/addTaskMemberMotal";
+import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirmDeleteMemberFromTask";
 
 interface Board {
   id: string;
   title: string;
   tasks: Task[];
   members: any[];
+  admin: { id: number };
 }
 
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
+  const [isMemberModalOpen, SetIsMemberModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmMemberDeleteModalOpen, setIsConfirmMemberDeleteModalOpen] = useState(false);
+  const [confirmMemberDeleteMember,setconfirmMemberDeleteMember] = useState<any>();
   const [isEditing, setIsEditing] = useState(false); // Estado de edição
   const [editedTitle, setEditedTitle] = useState(""); // Estado para armazenar o título editado
   const [columns, setColumns] = useState<{ [key: string]: any }>({
@@ -30,6 +36,7 @@ export default function BoardPage({ params }: any) {
 
   async function fetchBoardInfo() {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/board/${params.id}`);
+    console.log('Data received:', response.data);
     return response.data;
   }
 
@@ -180,8 +187,11 @@ export default function BoardPage({ params }: any) {
     setIsModalOpen(false);
   };
 
+  const selectMemberToDelete = (member: any) => {
+    setconfirmMemberDeleteMember(member);
+    setIsConfirmMemberDeleteModalOpen(true);
+  }
 
-  console.log(board);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       {isModalOpen && (
@@ -189,6 +199,17 @@ export default function BoardPage({ params }: any) {
         <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id} />
 
       )}
+
+      {isMemberModalOpen && (
+        <AddTaskMemberModal closeModal={() => SetIsMemberModalOpen(false)} boardId={Number(board.id)} />
+      )
+      }
+
+      {isConfirmMemberDeleteModalOpen && (
+        <ConfirmDeleteMemberFromTask closeModal={() => setIsConfirmMemberDeleteModalOpen(false)} member={confirmMemberDeleteMember} boardId={Number(board.id)} />
+      )
+
+      }
       <div className="flex flex-col items-start p-6 w-full h-full ">
         <div className="flex justify-start gap-4 items-start">
           {isEditing ? (
@@ -212,13 +233,17 @@ export default function BoardPage({ params }: any) {
             <div className="flex gap-4 items-center ">
               <FaUsers size={30} />
               <h1 className="text-4xl font-bold">Membros</h1>
-              <button className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-1 px-4 rounded">
+              <button onClick={() => SetIsMemberModalOpen(true)} className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-1 px-4 rounded">
                 <FaPlus size={26} />
               </button>
             </div>
             {board.members.map((member) => (
               <div key={member.id} className="flex items-center gap-4">
-                <li className="text-md font-bold">{member.name} ({member.role})	</li>
+                <li className="text-md font-bold">{member.name} {member.id == board.admin?.id ? "(admin)" : 
+                  
+                  <button onClick={() => selectMemberToDelete(member)} className="bg-red-500 text-white p-2 rounded-lg">Remover</button>
+                  
+                  }	</li>
               </div>
             ))}
           </div>
@@ -237,7 +262,7 @@ export default function BoardPage({ params }: any) {
         <div className="flex justify-center gap-10 overflow-x-auto w-full  p-6">
           {Object.values(columns).map((col) => (
             <div key={col.id} className="flex-1">
-              <Column col={col} />
+              <Column col={col} boardMembers={board.members} />
             </div>
           ))}
         </div>

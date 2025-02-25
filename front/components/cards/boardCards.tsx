@@ -33,7 +33,7 @@ export default function BoardCard({ title, numberOfTasks, id }: { title: string,
             onClick={() => {
                 router.push(`/boards/${id}`);
             }}
-            className="border-2 p-2 w-1/5 shadow-xl rounded-md hover:cursor-pointer hover:shadow-2xl hover:shadow-teal-200 hover:scale-110 duration-300 m-1 "
+            className="border-2 p-2 w-1/5 shadow-lg rounded-md hover:cursor-pointer hover:scale-105 duration-300 m-1 "
         >
             <div className="flex justify-between">
                 <h1 className="font-bold text-xl">{title}</h1>
