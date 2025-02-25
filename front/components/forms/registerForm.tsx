@@ -74,7 +74,7 @@ export default function RegisterForm() {
                     {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message?.toString()}</p>}
                 </div>
 
-                <button type="submit" className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600">
+                <button type="submit" className="w-full bg-teal-500 text-white p-3 rounded-md hover:bg-blue-600">
                     Registrar
                 </button>
             </form>

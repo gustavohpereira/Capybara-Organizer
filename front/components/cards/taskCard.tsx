@@ -2,6 +2,7 @@ import { Task } from "@/types";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import DetailTaskModal from "../modal/detailTaskModal";
+import { IoMdClose } from "react-icons/io";
 
 type TaskCardProps = {
   text: string
@@ -16,7 +17,7 @@ export default function TaskCard(props: TaskCardProps) {
   const handleTaskDelete = async () => {
     const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
 
-    if(!isConfirmed) {
+    if (!isConfirmed) {
       return;
     }
 
@@ -24,45 +25,45 @@ export default function TaskCard(props: TaskCardProps) {
       method: 'DELETE',
     });
 
-    if(response.ok) {
+    if (response.ok) {
       window.location.reload();
     }
 
   }
 
-  const handleTaskClick = ()=> {
+  const handleTaskClick = () => {
     setOpenModal(true);
   }
 
   return (
     <>
-    <Draggable draggableId={props.task.id.toString()} key={props.task.id.toString()} index={props.index}>
-      
-      {(provided, snapshot) => (
-        <div
-          onClick={handleTaskClick}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={{
-            ...provided.draggableProps.style,
-            opacity: snapshot.isDragging ? 0.5 : 1,
-            margin: "8px 0",
-            border: "1px solid #ddd",
-            cursor: "move",
-          }}
-          className="shadow-md rounded-lg bg-white p-4 w-full"
-        >
-          <div className="w-full flex justify-end">
-            <button onClick={handleTaskDelete} className="mt-2 font-light text-red-500" >remover</button>
-          </div>
-          <h3 className="font-bold text-xl">{props.task.title}</h3>
-          <p className="mt-2 font-light">{props.task.description}</p>
+      <Draggable draggableId={props.task.id.toString()} key={props.task.id.toString()} index={props.index}>
 
-        </div>
-      )}
-    </Draggable>
-    {openModal && <DetailTaskModal taskData={props.task}  closeModal={() => setOpenModal(false)} boardMembers={props.members} />} 
+        {(provided, snapshot) => (
+          <div
+            onClick={handleTaskClick}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={{
+              ...provided.draggableProps.style,
+              opacity: snapshot.isDragging ? 0.5 : 1,
+              margin: "8px 0",
+              border: "1px solid #ddd",
+              cursor: "move",
+            }}
+            className="shadow-md rounded-lg bg-white p-4 w-full"
+          >
+            <div className="w-full flex justify-end">
+              <button onClick={handleTaskDelete} className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full duration-300" ><IoMdClose size={20} /></button>
+            </div>
+            <h3 className="font-bold text-xl">{props.task.title}</h3>
+            <p className="mt-2 font-light">{props.task.description}</p>
+
+          </div>
+        )}
+      </Draggable>
+      {openModal && <DetailTaskModal taskData={props.task} closeModal={() => setOpenModal(false)} boardMembers={props.members} />}
     </>
   );
 }

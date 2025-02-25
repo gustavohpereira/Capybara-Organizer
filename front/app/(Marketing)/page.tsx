@@ -14,11 +14,11 @@ export default function MarketingPage() {
             {/* left side */}
             <div className="bg-teal-500 h-screen w-1/2 flex flex-col items-center justify-center p-16 gap-12">
                 <Image src={'/capybara_login.png'} width={250} height={250} alt="logo da capybara organizer"></Image>
-                <h1 className="font-extrabold text-6xl text-center">
-                    Um novo jeito de se organizar
+                <h1 className="font-normal text-6xl text-center text-white">
+                    Um novo jeito de se <strong className="font-extrabold">organizar</strong>
                 </h1>
-                <p className="text-center ">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dicta praesentium dolores soluta tempore ipsa, explicabo, commodi odit itaque tenetur error perferendis suscipit quidem natus temporibus qui distinctio aut similique quis?
+                <p className="text-center text-white ">
+                Transforme sua rotina com organização e praticidade
                 </p>
             </div>
             {/* right side */}

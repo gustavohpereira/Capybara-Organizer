@@ -12,8 +12,10 @@ export default function LoginForm() {
      async function onSubmit({ email, password }: any) {
         const token =  await login({ email, password });
         if(token){
-            // window.location.replace('/home');    
-
+            window.location.replace('/home');    
+            alert('Login successful!');
+        } else {
+            alert('Login failed. Please check your credentials and try again.');
         }
 
     }
@@ -43,7 +45,7 @@ export default function LoginForm() {
                     {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message?.toString()}</p>}
                 </div>
 
-                <button type="submit" className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600">
+                <button type="submit" className="w-full bg-teal-500 text-white p-3 rounded-md hover:bg-blue-600">
                     Login
                 </button>
             </form>

@@ -6,6 +6,8 @@ import taskRouter from "./routes/task.routes";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import boardRouter from "./routes/Board.routes";
+import { createAdminUser } from "./database/seeds/admin.seeds";
+
 
 
 require('dotenv').config()
@@ -21,9 +23,10 @@ app.use(cors({
 }))
 
 
-appDataSource.initialize().then((connection) => {
+appDataSource.initialize().then(async (connection) => {
     console.log("Database initialized")
     connection.runMigrations()
+    await createAdminUser(appDataSource);
     app.listen(process.env.PORT, () => {
         console.log(`Server running on http://localhost:${process.env.PORT}`)
     })
@@ -37,5 +40,7 @@ app.get('/', async (req, res) => {
 app.use('/task', taskRouter)
 app.use('/user', userRoutes)
 app.use('/auth', authRoutes);
-app.use('/board',boardRouter)
+app.use('/board', boardRouter)
+
+
 

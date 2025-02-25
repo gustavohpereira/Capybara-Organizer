@@ -10,6 +10,7 @@ import { FaPlus, FaUsers } from "react-icons/fa6";
 import { table } from "console";
 import AddTaskMemberModal from "@/components/modal/addTaskMemberMotal";
 import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirmDeleteMemberFromTask";
+import { IoMdClose } from "react-icons/io";
 
 interface Board {
   id: string;
@@ -24,7 +25,7 @@ export default function BoardPage({ params }: any) {
   const [isMemberModalOpen, SetIsMemberModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmMemberDeleteModalOpen, setIsConfirmMemberDeleteModalOpen] = useState(false);
-  const [confirmMemberDeleteMember,setconfirmMemberDeleteMember] = useState<any>();
+  const [confirmMemberDeleteMember, setconfirmMemberDeleteMember] = useState<any>();
   const [isEditing, setIsEditing] = useState(false); // Estado de edição
   const [editedTitle, setEditedTitle] = useState(""); // Estado para armazenar o título editado
   const [columns, setColumns] = useState<{ [key: string]: any }>({
@@ -238,13 +239,16 @@ export default function BoardPage({ params }: any) {
               </button>
             </div>
             {board.members.map((member) => (
-              <div key={member.id} className="flex items-center gap-4">
-                <li className="text-md font-bold">{member.name} {member.id == board.admin?.id ? "(admin)" : 
-                  
-                  <button onClick={() => selectMemberToDelete(member)} className="bg-red-500 text-white p-2 rounded-lg">Remover</button>
-                  
-                  }	</li>
-              </div>
+                <div key={member.id} className="flex items-center gap-4">
+                <li className="text-md font-bold flex items-center gap-2">
+                  {member.name} {member.id == board.admin?.id ? "(admin)" : null}
+                  {member.id !== board.admin?.id && (
+                  <button onClick={() => selectMemberToDelete(member)} className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full duration-300">
+                    <IoMdClose size={20} />
+                  </button>
+                  )}
+                </li>
+                </div>
             ))}
           </div>
 

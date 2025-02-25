@@ -31,6 +31,7 @@ export class User {
   @ManyToMany(() => Task, (task) => task.users)
   tasks!: Task[];
   
-  @Column()
+  @Column({ default: "user", update: false })
   role!: string;
+  
 }
