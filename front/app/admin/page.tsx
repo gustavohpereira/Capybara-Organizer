@@ -47,8 +47,8 @@ export default function AdminPage() {
                 <h1 className="font-semibold text-3xl">Tela de administração</h1>
             </div>
             <div className="flex gap-8 w-[80%] flex-wrap">
-                {users.map((user) => (
-                    <UserCard key={user.id} user={user} />
+                {users.map((user,index) => (
+                    <UserCard key={index} user={user} />
                 ))}
             </div>
         </div>
