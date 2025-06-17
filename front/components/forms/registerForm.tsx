@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function RegisterForm() {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -10,7 +11,7 @@ export default function RegisterForm() {
 
 
         if (password !== confirmPassword) {
-            return alert('As senhas precisam ser iguais');
+            return notify_toasted('As senhas precisam ser iguais','warning');
         }
 
         try {
@@ -24,6 +25,59 @@ export default function RegisterForm() {
             console.error('Error sending data:', error.message);
         }
     };
+
+     function notify_toasted(message: String,mode:String = 'default') {
+        
+            switch (mode) {
+                case 'success':
+                toast.success(message, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                break;
+                case 'warning':
+                toast.warning(message, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                break;
+                case 'error':
+                toast.error(message, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                break;
+                default:
+                toast(message, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            }
+        }
 
     return (
         <div className="flex justify-center items-center ">
@@ -78,6 +132,7 @@ export default function RegisterForm() {
                     Registrar
                 </button>
             </form>
+            <ToastContainer />
         </div>
     );
 }

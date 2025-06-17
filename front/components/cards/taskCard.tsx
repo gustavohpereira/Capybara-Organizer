@@ -54,12 +54,31 @@ export default function TaskCard(props: TaskCardProps) {
             }}
             className="shadow-md rounded-lg bg-white p-4 w-full"
           >
-            <div className="w-full flex justify-end">
-              <button onClick={handleTaskDelete} className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full duration-300" ><IoMdClose size={20} /></button>
-            </div>
-            <h3 className="font-bold text-xl">{props.task.title}</h3>
-            <p className="mt-2 font-light">{props.task.description}</p>
-
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                handleTaskDelete();
+              }}
+              className="absolute top-2 right-2 p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition"
+              aria-label="Remover tarefa"
+              tabIndex={-1}
+            >
+              <IoMdClose size={20} />
+            </button>
+            <h3 className="font-bold text-lg mb-1 truncate" title={props.task.title}>
+              {props.task.title}
+            </h3>
+            {props.task.description && (
+              <p className="text-gray-600 text-sm line-clamp-2" title={props.task.description}>
+                {props.task.description}
+              </p>
+            )}
+            <p className="text-xs text-gray-400 mt-2">
+              Data de criação:{" "}
+              {props.task.createdAt
+                ? new Date(props.task.createdAt).toLocaleDateString("pt-BR")
+                : "Desconhecida"}
+            </p>
           </div>
         )}
       </Draggable>

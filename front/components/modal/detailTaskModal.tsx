@@ -3,6 +3,7 @@ import { FaPlus, FaUsers } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
 import { Task } from "@/types";
+import { toast, ToastContainer } from "react-toastify";
 
 interface IDetailTaskProps {
   taskData: Task;
@@ -48,16 +49,68 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
         `${process.env.NEXT_PUBLIC_API_URL}/task/${tasks.id}`,
         tasks
       );
-      console.log("Data sent successfully:", response.data);
-      alert("Tarefa atualizada com sucesso!");
+      notify_toasted("Tarefa atualizada com sucesso!",'success');
       setTaskTitle(tasks.title);
       setTaskDescription(tasks.description);
       return response.data;
     } catch (error) {
       console.error("Error updating tasks:", error);
-      alert("Erro ao atualizar a tarefa.");
+      notify_toasted("Erro ao atualizar a tarefa.",'error');
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  function notify_toasted(message: String, mode: String = 'default') {
+
+    switch (mode) {
+      case 'success':
+        toast.success(message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        break;
+      case 'warning':
+        toast.warning(message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        break;
+      case 'error':
+        toast.error(message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        break;
+      default:
+        toast(message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
     }
   }
 
@@ -163,7 +216,7 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
                   className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
                   onClick={() => {
                     if (!editedTitle.trim() || !editedDescription.trim()) {
-                      alert("Título e descrição não podem estar vazios!");
+                      notify_toasted("Título e descrição não podem estar vazios!",'warning');
                       return;
                     }
                     const updatedTask = {
@@ -213,6 +266,7 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
 
         {isSaving && <p className="text-gray-500 text-center">Salvando...</p>}
       </div>
+      <ToastContainer />
     </div>
   );
 }

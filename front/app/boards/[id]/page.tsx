@@ -38,6 +38,8 @@ export default function BoardPage({ params }: any) {
   async function fetchBoardInfo() {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/board/${params.id}`);
     console.log('Data received:', response.data);
+    setEditedTitle(response.data.title)
+
     return response.data;
   }
 

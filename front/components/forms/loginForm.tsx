@@ -3,22 +3,79 @@ import { useAuth } from '@/Providers/AuthProvider';
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { ToastContainer, toast } from 'react-toastify';
+
+
 
 
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { login } = useAuth();  // Usando o login do contexto de autenticação
 
-     async function onSubmit({ email, password }: any) {
-        const token =  await login({ email, password });
-        if(token){
-            window.location.replace('/home');    
-            alert('Login successful!');
+    async function onSubmit({ email, password }: any) {
+        const token = await login({ email, password });
+        if (token) {
+            window.location.replace('/home');
+            notify_toasted('Login feito com sucesso!','success');
         } else {
-            alert('Login failed. Please check your credentials and try again.');
+            notify_toasted('Login falhou, tente novamente.','error');
         }
 
     }
+
+    function notify_toasted(message: String,mode:String = 'default') {
+    
+        switch (mode) {
+            case 'success':
+            toast.success(message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            break;
+            case 'warning':
+            toast.warning(message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            break;
+            case 'error':
+            toast.error(message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            break;
+            default:
+            toast(message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+    }
+
 
     return (
         <div className="flex justify-center items-center ">
@@ -49,6 +106,8 @@ export default function LoginForm() {
                     Login
                 </button>
             </form>
+
+            <ToastContainer />
         </div>
     );
 }
