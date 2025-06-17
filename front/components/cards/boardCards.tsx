@@ -11,7 +11,7 @@ export default function BoardCard({ title, numberOfTasks, id }: { title: string,
         try {
             const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
             if (isConfirmed){
-                const response = await fetch(`http://localhost:8080/board/${id}`, {
+                const response = await fetch(`/board/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

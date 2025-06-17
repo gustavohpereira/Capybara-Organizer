@@ -21,7 +21,7 @@ export default function TaskCard(props: TaskCardProps) {
       return;
     }
 
-    const response = await fetch(`http://localhost:8080/task/${props.task.id}`, {
+    const response = await fetch(`/task/${props.task.id}`, {
       method: 'DELETE',
     });
 

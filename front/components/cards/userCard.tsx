@@ -9,7 +9,7 @@ export default function UserCard({ user }: { user: { id: number; name: string; e
             return;
         }
 
-        const response = await fetch(`http://localhost:8080/user/${user.id}`, {
+        const response = await fetch(`/user/${user.id}`, {
             method: 'DELETE',
         });
 
