@@ -11,7 +11,7 @@ export default function BoardCard({ title, numberOfTasks, id }: { title: string,
         try {
             const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
             if (isConfirmed){
-                const response = await fetch(`/board/${id}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/board/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export default function BoardCard({ title, numberOfTasks, id }: { title: string,
             onClick={() => {
                 router.push(`/boards/${id}`);
             }}
-            className="border-2 hover:border-teal-200 p-4 w-1/5 shadow-lg rounded-lg hover:cursor-pointer duration-300 m-1 "
+            className="border-2 hover:border-teal-200 p-4 w-1/5 max-h-36 shadow-lg rounded-lg hover:cursor-pointer duration-300 m-1 "
         >
             <div className="flex justify-between">
                 <h1 className="font-bold text-xl">{title}</h1>

@@ -56,6 +56,7 @@ export class BoardService {
     }
 
     async deleteBoard(id: number): Promise<void> {
+        console.log(id)
         await this.boardRepository.delete(id);
     }
     async addMemberToBoard(boardId: number, userId: number): Promise<Board | undefined> {

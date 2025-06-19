@@ -157,7 +157,7 @@ export default function BoardPage({ params }: any) {
     }
   };
 
-  if (!board) return <div>Loading...</div>;
+  // if (!board) return <div>Loading...</div>;
 
 
   const handleTitleEdit = () => {
@@ -227,7 +227,7 @@ export default function BoardPage({ params }: any) {
             />
           ) : (
             <div className="pl-6 flex gap-4 items-center">
-              <h2 className="text-4xl font-bold">{board.title}</h2>
+              <h2 className="text-4xl font-bold">{board?.title}</h2>
               <CiEdit size={30} className="hover:text-teal-500 cursor-pointer" onClick={handleTitleEdit} />
             </div>
           )}
@@ -240,7 +240,7 @@ export default function BoardPage({ params }: any) {
                 <FaPlus size={26} />
               </button>
             </div>
-            {board.members.map((member) => (
+            {board?.members.map((member) => (
                 <div key={member.id} className="flex items-center gap-4">
                 <li className="text-md font-bold flex items-center gap-2">
                   {member.name} {member.id == board.admin?.id ? "(admin)" : null}
@@ -268,7 +268,7 @@ export default function BoardPage({ params }: any) {
         <div className="flex justify-center gap-10 overflow-x-auto w-full  p-6">
           {Object.values(columns).map((col) => (
             <div key={col.id} className="flex-1">
-              <Column col={col} boardMembers={board.members} />
+              <Column col={col} boardMembers={board?.members} />
             </div>
           ))}
         </div>

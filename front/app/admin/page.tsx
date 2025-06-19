@@ -30,13 +30,6 @@ export default function AdminPage() {
         verifyUser();
     }, []);
 
-
-
-
-    if (loading) {
-        return <div>Carregando...</div>;
-    }
-
     if (user?.role != "admin") {
         window.location.href = "/";
     }

@@ -21,7 +21,7 @@ export default function TaskCard(props: TaskCardProps) {
       return;
     }
 
-    const response = await fetch(`/task/${props.task.id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/task/${props.task.id}`, {
       method: 'DELETE',
     });
 

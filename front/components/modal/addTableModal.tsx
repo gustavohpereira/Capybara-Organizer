@@ -6,7 +6,7 @@ export default function AddTableModal({ closeModal, user }: { closeModal: () => 
     const [boardName, setBoardName] = useState('');
     const [users, setUsers] = useState<any[]>([]);
     const [selectedUserId, setSelectedUserId] = useState('');
-    const [members, setMembers] = useState<any[]>([user]); 
+    const [members, setMembers] = useState<any[]>([user]);
 
     async function handleSubmit(event: { preventDefault: () => void; }) {
         event.preventDefault();
@@ -20,11 +20,15 @@ export default function AddTableModal({ closeModal, user }: { closeModal: () => 
         console.log('Data sent successfully:', response.data);
 
         closeModal();
+
+        if (response.status >= 200 && response.status < 300) {
+            window.location.reload();
+        }
     }
 
     function addMember() {
         const userToAdd = users.find(u => u.id == selectedUserId);
-        if (userToAdd && !members.some(m => m.id === userToAdd.id)) { 
+        if (userToAdd && !members.some(m => m.id === userToAdd.id)) {
             setMembers([...members, userToAdd]);
         }
     }

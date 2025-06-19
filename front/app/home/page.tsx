@@ -45,9 +45,6 @@ export default function Home() {
   };
 
 
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
   return (
     <div className="p-8 bg-slate-100 h-screen flex flex-col items-center">
       {isModalOpen && (
@@ -70,7 +67,7 @@ export default function Home() {
           <p className="font-semibold text-3xl">Suas boards</p>
             <button
             onClick={openModal}
-            className="bg-teal-500 h-3/5 p-2 rounded-md text-white transition-colors duration-200 hover:bg-teal-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
+            className="bg-teal-500 h-2/5 max-h-12 p-2 rounded-md text-white transition-colors duration-200 hover:bg-teal-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
             >
             Criar Board
             </button>

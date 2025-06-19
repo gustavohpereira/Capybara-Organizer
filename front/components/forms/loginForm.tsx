@@ -85,6 +85,7 @@ export default function LoginForm() {
                 <div className="mb-4">
                     <label className="block text-gray-700 mb-2">Email</label>
                     <input
+                        id='email'
                         type="email"
                         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {...register('email', { required: 'Email é obrigatório' })}

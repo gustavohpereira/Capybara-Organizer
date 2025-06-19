@@ -9,7 +9,7 @@ export default function UserCard({ user }: { user: { id: number; name: string; e
             return;
         }
 
-        const response = await fetch(`/user/${user.id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/${user.id}`, {
             method: 'DELETE',
         });
 
