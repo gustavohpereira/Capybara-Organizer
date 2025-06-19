@@ -32,6 +32,10 @@ userRoutes.get('/getUser', async (req, res) => {
     await userController.getUserById(req, res)
 });
 
+userRoutes.get('/getUserByEmail/:userEmail', async (req, res) => {
+    await userController.getUserByEmail(req, res)
+});
+
 userRoutes.post('/', async (req, res) => {
     await userController.createUser(req, res);
 });

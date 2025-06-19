@@ -203,12 +203,12 @@ export default function BoardPage({ params }: any) {
 
       )}
 
-      {isMemberModalOpen && (
+      {isMemberModalOpen && board && (
         <AddTaskMemberModal closeModal={() => SetIsMemberModalOpen(false)} boardId={Number(board.id)} />
       )
       }
 
-      {isConfirmMemberDeleteModalOpen && (
+      {isConfirmMemberDeleteModalOpen && board && (
         <ConfirmDeleteMemberFromTask closeModal={() => setIsConfirmMemberDeleteModalOpen(false)} member={confirmMemberDeleteMember} boardId={Number(board.id)} />
       )
 
@@ -268,7 +268,7 @@ export default function BoardPage({ params }: any) {
         <div className="flex justify-center gap-10 overflow-x-auto w-full  p-6">
           {Object.values(columns).map((col) => (
             <div key={col.id} className="flex-1">
-              <Column col={col} boardMembers={board?.members} />
+              <Column col={col} boardMembers={board?.members ?? []} />
             </div>
           ))}
         </div>

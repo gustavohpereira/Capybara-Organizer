@@ -46,9 +46,6 @@ export class UserController {
         return res.status(403).json({ message: 'Token inválido: ID de usuário não encontrado' });
       }
 
-
-      console.log('ID do usuário decodificado:', decoded.userId);
-
       const user = await this.userService.getUserById(decoded?.userId);
 
       if (user) {
@@ -59,6 +56,26 @@ export class UserController {
     } catch (error: any) {
       console.log(error.message);
       return res.status(403).json({ message: 'Token inválido ou expirado' });
+    }
+  }
+
+  async getUserByEmail(req: Request, res: Response) {
+    try {
+      const { userEmail } = req.params;
+      if (!userEmail) {
+        return res.status(400).json({ message: 'Email não fornecido' });
+      }
+
+      const user = await this.userService.getUserByEmail(userEmail);
+
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).json({ message: 'Usuário não encontrado' });
+      }
+    } catch (error: any) {
+      console.error(error.message);
+      res.status(500).json({ message: 'Erro ao buscar usuário por email' });
     }
   }
 
@@ -117,5 +134,5 @@ export class UserController {
       console.error(`Erro ao excluir hete ${user.id}:`, error.message);
 
     }
-  } 
+  }
 }
