@@ -36,7 +36,7 @@ export class UserService {
   }
 
   getUserByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ email: email });
+    return this.userRepository.findOne({ where: { email: email }, relations: ['boards', 'tasks'] });
   }
 
   async createUser(userData: Partial<User>): Promise<User> {

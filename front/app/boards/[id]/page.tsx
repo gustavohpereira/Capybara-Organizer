@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Column } from "@/components/boardColumn";
-import { Task } from "@/types";
+import { Board, Task } from "@/types";
 import AddTaskModal from "@/components/modal/addTaskModal";
 import { CiEdit } from "react-icons/ci";
 import { FaPlus, FaUsers } from "react-icons/fa6";
@@ -12,13 +12,7 @@ import AddTaskMemberModal from "@/components/modal/addTaskMemberMotal";
 import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirmDeleteMemberFromTask";
 import { IoMdClose } from "react-icons/io";
 
-interface Board {
-  id: string;
-  title: string;
-  tasks: Task[];
-  members: any[];
-  admin: { id: number };
-}
+
 
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
@@ -199,7 +193,7 @@ export default function BoardPage({ params }: any) {
     <DragDropContext onDragEnd={onDragEnd}>
       {isModalOpen && (
 
-        <AddTaskModal closeModal={closeModal} Columns={columns} boardId={params.id} />
+        <AddTaskModal closeModal={closeModal} boardMembers={board?.members ?? []} Columns={columns} boardId={params.id} />
 
       )}
 

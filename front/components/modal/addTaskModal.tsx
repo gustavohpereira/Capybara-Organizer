@@ -1,11 +1,13 @@
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
 import axios from "axios";
+import { IUser } from "@/types";
 
-export default function AddTaskModal({ closeModal, boardId, Columns }: { closeModal: () => void, boardId: number, Columns: any }) {
+export default function AddTaskModal({ closeModal, boardId, boardMembers, Columns }: { closeModal: () => void, boardId: number, boardMembers: IUser[], Columns: any }) {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [taskState, setTaskState] = useState('todo');
+  const [assignedUserIds, setAssignedUserIds] = useState<number[]>([]);
 
   async function handleSubmit(event: { preventDefault: () => void; }) {
     event.preventDefault();
@@ -17,6 +19,7 @@ export default function AddTaskModal({ closeModal, boardId, Columns }: { closeMo
       state: taskState,
       board: boardId,
       list_index: selectedColumn?.list.length || 0,
+      users: boardMembers.filter(member => assignedUserIds.includes(member.id)), 
     };
 
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/task`, taskData);
@@ -24,6 +27,11 @@ export default function AddTaskModal({ closeModal, boardId, Columns }: { closeMo
 
     closeModal();
     window.location.reload();
+  }
+
+  function handleUserSelect(e: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedOptions = Array.from(e.target.selectedOptions).map(opt => Number(opt.value));
+    setAssignedUserIds(selectedOptions);
   }
 
   return (
@@ -62,6 +70,25 @@ export default function AddTaskModal({ closeModal, boardId, Columns }: { closeMo
             <option value="doing">Fazendo</option>
             <option value="done">Concluída</option>
           </select>
+
+          <label className="flex flex-col gap-1">
+            <span>Atribuir membros</span>
+            <select
+              className="w-full border border-gray-500 text-black p-2 rounded-lg"
+              multiple
+              required
+              value={assignedUserIds.map(String)}
+              onChange={handleUserSelect}
+              size={Math.min(4, boardMembers.length)}
+            >
+              {boardMembers.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs text-gray-500">Segure Ctrl (Windows) ou Cmd (Mac) para selecionar vários</span>
+          </label>
 
           <button
             type="submit"

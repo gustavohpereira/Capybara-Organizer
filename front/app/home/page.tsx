@@ -10,6 +10,8 @@ import AddTableModal from "@/components/modal/addTableModal";
 import { useAuth } from "@/Providers/AuthProvider";
 import { useUser } from "@/Providers/UserProvider";
 import image from '../../images/capybaraError.png'
+import TaskStatisticCards from "@/components/taskStatisticCards";
+
 
 export default function Home() {
   const [boards, setBoards] = useState<any>([]);
@@ -52,14 +54,16 @@ export default function Home() {
       )}
       <div className="my-8 w-full ">
         <div className="flex w-full justify-start">
-
           <h1 className="font-extrabold text-4xl my-12">Dashboard</h1>
         </div>
-
-        <div className="flex w-full justify-end">
-
-
+        
+        {user && 
+        
+        <div className="flex justify-start w-full">
+          <TaskStatisticCards userId={user.id}/>
         </div>
+        
+        }
 
       </div>
       <div className="flex gap-8 w-[100%] flex-wrap bg-white shadow-lg p-4 rounded-lg min-h-[50vh]">

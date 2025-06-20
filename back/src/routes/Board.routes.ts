@@ -5,7 +5,7 @@ import { User } from "../entity/user.entity";
 import { Router } from "express";
 import { BoardService } from "../service/Board.service";
 import { UserService } from "../service/user.service";
-import { BoardController } from "../controller/Board.controllet";
+import { BoardController } from "../controller/Board.controller";
 
 const boardRouter = Router();
 const boardService = new BoardService(

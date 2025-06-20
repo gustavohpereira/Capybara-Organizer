@@ -7,6 +7,7 @@ import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import boardRouter from "./routes/Board.routes";
 import { createAdminUser } from "./database/seeds/admin.seeds";
+import statisticsRouter from "./routes/statistics.routes";
 
 
 
@@ -41,6 +42,7 @@ app.use('/task', taskRouter)
 app.use('/user', userRoutes)
 app.use('/auth', authRoutes);
 app.use('/board', boardRouter)
+app.use('/statistics',statisticsRouter)
 
 
 
