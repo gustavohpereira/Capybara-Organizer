@@ -8,16 +8,19 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 
-export default function LoginForm() {
+export default function LoginForm({setLoading}:{setLoading:Function})  {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { login } = useAuth();  // Usando o login do contexto de autenticação
 
     async function onSubmit({ email, password }: any) {
+        setLoading(true);
         const token = await login({ email, password });
         if (token) {
+            setLoading(false);
             window.location.replace('/home');
             notify_toasted('Login feito com sucesso!','success');
         } else {
+            setLoading(false);
             notify_toasted('Login falhou, tente novamente.','error');
         }
 
@@ -79,7 +82,7 @@ export default function LoginForm() {
 
     return (
         <div className="flex justify-center items-center ">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-14 rounded-lg shadow-2xl w-full ">
+            <form onSubmit={handleSubmit(onSubmit)} className=" p-14 rounded-lg shadow-2xl w-full ">
 
 
                 <div className="mb-4">

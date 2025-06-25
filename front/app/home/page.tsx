@@ -32,6 +32,7 @@ export default function Home() {
 
     async function getBoards() {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/board`);
+
       setBoards(response.data);
     }
     verifyUser();
@@ -48,46 +49,48 @@ export default function Home() {
 
 
   return (
-    <div className="p-8 bg-slate-100 h-screen flex flex-col items-center">
+    <div className="p-8  h-screen flex flex-col items-center">
       {isModalOpen && (
         <AddTableModal closeModal={closeModal} user={user} />
       )}
       <div className="my-8 w-full ">
-        <div className="flex w-full justify-start">
-          <h1 className="font-extrabold text-4xl my-12">Dashboard</h1>
-        </div>
-        
-        {user && 
-        
-        <div className="flex justify-start w-full">
-          <TaskStatisticCards userId={user.id}/>
-        </div>
-        
+
+
+        {user &&
+
+          <div className="flex justify-between w-full">
+            <TaskStatisticCards userId={user.id} />
+          </div>
+
         }
 
       </div>
-      <div className="flex gap-8 w-[100%] flex-wrap bg-white shadow-lg p-4 rounded-lg min-h-[50vh]">
+      <div className="flex flex-col items-start gap-8 w-[100%] bg-white shadow-lg p-4 rounded-lg min-h-[50vh]">
         <div className="flex justify-between w-full">
           <p className="font-semibold text-3xl">Suas boards</p>
-            <button
+          <button
             onClick={openModal}
-            className="bg-teal-500 h-2/5 max-h-12 p-2 rounded-md text-white transition-colors duration-200 hover:bg-teal-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
-            >
+            className="bg-teal-500  max-h-12 p-2 rounded-md text-white transition-colors duration-200 hover:bg-teal-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2"
+          >
             Criar Board
-            </button>
+          </button>
         </div>
-        {boards.filter((board: any) => board.members.some((member: any) => member.id === user?.id)).length === 0 ? (
-          <div className="w-full flex flex-col justify-center items-center py-16">
-        <img src={image.src} alt="Nenhuma board encontrada" className="w-24 h-24 mb-4" />
-        <span className="text-teal-500 text-lg">Nenhuma board encontrada.</span>
-          </div>
-        ) : (
-          boards
-        .filter((board: any) => board.members.some((member: any) => member.id === user?.id))
-        .map((board: any) => (
-          <BoardCard key={board.id} title={board.title} numberOfTasks={board.tasks.length} id={board.id} />
-        ))
-        )}
+        <div className="flex justify-start items-start w-[100%] flex-wrap gap-4">
+
+          {boards.filter((board: any) => board.members.some((member: any) => member.id === user?.id)).length === 0 ? (
+            <div className="w-full flex flex-col justify-center items-center py-16">
+              <img src={image.src} alt="Nenhuma board encontrada" className="w-24 h-24 mb-4" />
+              <span className="text-teal-500 text-lg">Nenhuma board encontrada.</span>
+            </div>
+          ) : (
+            boards
+              .filter((board: any) => board.members.some((member: any) => member.id === user?.id))
+              .map((board: any) => (
+                <BoardCard key={board.id} title={board.title} numberOfTasks={board.tasks.length} numberOfMembers={board.members.length} id={board.id} />
+              ))
+          )}
+
+        </div>
       </div>
     </div>
   )

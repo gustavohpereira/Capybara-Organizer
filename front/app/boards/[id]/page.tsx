@@ -7,12 +7,9 @@ import { Board, Task } from "@/types";
 import AddTaskModal from "@/components/modal/addTaskModal";
 import { CiEdit } from "react-icons/ci";
 import { FaPlus, FaUsers } from "react-icons/fa6";
-import { table } from "console";
 import AddTaskMemberModal from "@/components/modal/addTaskMemberMotal";
 import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirmDeleteMemberFromTask";
 import { IoMdClose } from "react-icons/io";
-
-
 
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
@@ -20,29 +17,27 @@ export default function BoardPage({ params }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmMemberDeleteModalOpen, setIsConfirmMemberDeleteModalOpen] = useState(false);
   const [confirmMemberDeleteMember, setconfirmMemberDeleteMember] = useState<any>();
-  const [isEditing, setIsEditing] = useState(false); // Estado de edição
-  const [editedTitle, setEditedTitle] = useState(""); // Estado para armazenar o título editado
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
   const [columns, setColumns] = useState<{ [key: string]: any }>({
     todo: { name: 'A fazer', id: 'todo', list: [] },
     doing: { name: 'Em progresso', id: 'doing', list: [] },
     done: { name: 'Finalizado', id: 'done', list: [] }
   });
-
+  const [loading, setLoading] = useState(true);
 
   async function fetchBoardInfo() {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/board/${params.id}`);
-    console.log('Data received:', response.data);
-    setEditedTitle(response.data.title)
-
+    setEditedTitle(response.data.title);
     return response.data;
   }
 
   useEffect(() => {
     const updateProcesses = async () => {
       try {
+        setLoading(true);
         const ProcessInfo = await fetchBoardInfo();
         setBoard(ProcessInfo);
-
 
         const initialColumns = {
           todo: {
@@ -69,15 +64,15 @@ export default function BoardPage({ params }: any) {
         };
 
         setColumns(initialColumns);
-
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     updateProcesses();
   }, []);
-
 
   async function attBoard(newTitle: string) {
     try {
@@ -90,7 +85,6 @@ export default function BoardPage({ params }: any) {
     }
   }
 
-
   async function att_tasks(tasks: Task[]) {
     try {
       const updateTasksPromises = tasks.map(async (task) => {
@@ -98,12 +92,10 @@ export default function BoardPage({ params }: any) {
           `${process.env.NEXT_PUBLIC_API_URL}/task/${task.id}`,
           task
         );
-        console.log('Data sent successfully for task with ID', task.id, ':', response.data);
         return response.data;
       });
 
       await Promise.all(updateTasksPromises);
-      console.log('All tasks updated successfully');
     } catch (error) {
       console.error('Error updating tasks:', error);
     }
@@ -151,120 +143,127 @@ export default function BoardPage({ params }: any) {
     }
   };
 
-  // if (!board) return <div>Loading...</div>;
-
-
-  const handleTitleEdit = () => {
-    setIsEditing(true); // Ativa o modo de edição
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedTitle(e.target.value); // Atualiza o título enquanto digita
-  };
-
+  const handleTitleEdit = () => setIsEditing(true);
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => setEditedTitle(e.target.value);
   const handleTitleBlur = () => {
-    setIsEditing(false); // Sai do modo de edição
-    if (editedTitle !== board?.title) {
-      attBoard(editedTitle); // Atualiza o título no back-end
-    }
+    setIsEditing(false);
+    if (editedTitle !== board?.title) attBoard(editedTitle);
   };
-
   const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setIsEditing(false); // Sai do modo de edição quando pressionar Enter
-      attBoard(editedTitle); // Atualiza o título no back-end
+      setIsEditing(false);
+      attBoard(editedTitle);
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const selectMemberToDelete = (member: any) => {
     setconfirmMemberDeleteMember(member);
     setIsConfirmMemberDeleteModalOpen(true);
-  }
+  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       {isModalOpen && (
-
         <AddTaskModal closeModal={closeModal} boardMembers={board?.members ?? []} Columns={columns} boardId={params.id} />
-
       )}
-
       {isMemberModalOpen && board && (
         <AddTaskMemberModal closeModal={() => SetIsMemberModalOpen(false)} boardId={Number(board.id)} />
-      )
-      }
-
+      )}
       {isConfirmMemberDeleteModalOpen && board && (
         <ConfirmDeleteMemberFromTask closeModal={() => setIsConfirmMemberDeleteModalOpen(false)} member={confirmMemberDeleteMember} boardId={Number(board.id)} />
-      )
+      )}
 
-      }
-      <div className="flex flex-col items-start p-6 w-full h-full ">
-        <div className="flex justify-start gap-4 items-start">
-          {isEditing ? (
-            <input
-              type="text"
-              value={editedTitle}
-              onChange={handleTitleChange}
-              onBlur={handleTitleBlur}
-              onKeyPress={handleTitleKeyPress}
-              className="border border-gray-300 p-2 text-4xl font-bold"
-              autoFocus
-            />
-          ) : (
-            <div className="pl-6 flex gap-4 items-center">
-              <h2 className="text-4xl font-bold">{board?.title}</h2>
-              <CiEdit size={30} className="hover:text-teal-500 cursor-pointer" onClick={handleTitleEdit} />
-            </div>
-          )}
-
-          <div className="flex flex-col items-start ml-64 gap-4">
-            <div className="flex gap-4 items-center ">
-              <FaUsers size={30} />
-              <h1 className="text-4xl font-bold">Membros</h1>
-              <button onClick={() => SetIsMemberModalOpen(true)} className="flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-1 px-4 rounded">
-                <FaPlus size={26} />
+      <div className="flex flex-col items-start w-full h-full bg-gray-50 min-h-screen">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 w-full bg-white/90 backdrop-blur border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm">
+          <div className="flex items-center gap-4">
+            {isEditing ? (
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                onKeyPress={handleTitleKeyPress}
+                className="border border-gray-300 p-2 text-3xl font-bold rounded-md focus:outline-teal-500"
+                autoFocus
+              />
+            ) : (
+              <div className="flex gap-2 items-center">
+                <h2 className="text-3xl md:text-4xl font-bold">{board?.title}</h2>
+                <button
+                  className="hover:text-teal-500 transition"
+                  onClick={handleTitleEdit}
+                  aria-label="Editar título"
+                >
+                  <CiEdit size={28} />
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 mt-4 md:mt-0">
+            <div className="flex items-center gap-2">
+              <FaUsers size={22} className="text-gray-600" />
+              <span className="text-lg font-semibold">Membros</span>
+              <button
+                onClick={() => SetIsMemberModalOpen(true)}
+                className="flex items-center gap-1 bg-teal-500 hover:bg-teal-600 text-white py-1 px-3 rounded transition"
+                aria-label="Adicionar membro"
+              >
+                <FaPlus size={18} />
               </button>
             </div>
-            {board?.members.map((member) => (
-                <div key={member.id} className="flex items-center gap-4">
-                <li className="text-md font-bold flex items-center gap-2">
-                  {member.name} {member.id == board.admin?.id ? "(admin)" : null}
+            <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
+              {board?.members.map((member) => (
+                <div key={member.id} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded shadow-sm">
+                  <span
+                    className="w-7 h-7 rounded-full bg-teal-200 flex items-center justify-center text-teal-800 font-bold text-sm"
+                    title={member.name}
+                  >
+                    {member.name[0]}
+                  </span>
+                  <span className="text-sm font-medium">{member.name} {member.id == board.admin?.id ? "(admin)" : null}</span>
                   {member.id !== board.admin?.id && (
-                  <button onClick={() => selectMemberToDelete(member)} className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full duration-300">
-                    <IoMdClose size={20} />
-                  </button>
+                    <button
+                      onClick={() => selectMemberToDelete(member)}
+                      className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition"
+                      aria-label="Remover membro"
+                    >
+                      <IoMdClose size={16} />
+                    </button>
                   )}
-                </li>
                 </div>
-            ))}
-          </div>
-
-        </div>
-        <button
-          onClick={openModal}
-          className="bg-teal-500 my-8 ml-6 p-2 rounded-md text-white hover:text-black">
-          Criar Tarefa
-        </button>
-
-
-
-
-        <hr />
-        <div className="flex justify-center gap-10 overflow-x-auto w-full  p-6">
-          {Object.values(columns).map((col) => (
-            <div key={col.id} className="flex-1">
-              <Column col={col} boardMembers={board?.members ?? []} />
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+
+        <div className="w-full flex flex-col items-end px-6">
+          <button
+            onClick={openModal}
+            className="bg-gradient-to-r from-teal-500 to-teal-400 my-8 px-6 p-2 rounded-lg text-white font-semibold text-lg shadow hover:from-teal-600 hover:to-teal-500 transition"
+          >
+            <FaPlus className="inline mr-2" /> Criar Tarefa
+          </button>
+
+          <hr className="w-full border-gray-200 mb-4" />
+
+          {loading ? (
+            <div className="flex justify-center items-center w-full h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+              <span className="ml-4 text-teal-700 font-semibold">Carregando...</span>
+            </div>
+          ) : (
+            <div className="flex justify-center gap-6 overflow-x-auto w-full p-2 md:p-6">
+              {Object.values(columns).map((col) => (
+                <div key={col.id} className="flex-1 min-w-[320px] max-w-[600px]">
+                  <Column col={col} boardMembers={board?.members ?? []} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </DragDropContext>
