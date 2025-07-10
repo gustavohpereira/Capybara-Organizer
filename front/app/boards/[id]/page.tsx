@@ -10,6 +10,8 @@ import { FaPlus, FaUsers } from "react-icons/fa6";
 import AddTaskMemberModal from "@/components/modal/addTaskMemberMotal";
 import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirmDeleteMemberFromTask";
 import { IoMdClose } from "react-icons/io";
+import { socket } from "@/functions/socket";
+
 
 export default function BoardPage({ params }: any) {
   const [board, setBoard] = useState<Board | null>(null);
@@ -33,45 +35,81 @@ export default function BoardPage({ params }: any) {
   }
 
   useEffect(() => {
-    const updateProcesses = async () => {
+    const loadBoard = async () => {
       try {
         setLoading(true);
-        const ProcessInfo = await fetchBoardInfo();
-        setBoard(ProcessInfo);
+
+        if (!socket.connected) {
+          socket.connect();
+        }
+
+        socket.emit("join_board", params.id);
+
+        const data = await fetchBoardInfo();
+        setBoard(data);
 
         const initialColumns = {
           todo: {
             id: 'todo',
             name: 'A fazer',
-            list: ProcessInfo.tasks
-              .filter((task: Task) => task.state === 'todo')
-              .sort((a: Task, b: Task) => a.list_index - b.list_index) || [],
+            list: data.tasks.filter((t: Task) => t.state === 'todo').sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index),
           },
           doing: {
             id: 'doing',
             name: 'Em progresso',
-            list: ProcessInfo.tasks
-              .filter((task: Task) => task.state === 'doing')
-              .sort((a: Task, b: Task) => a.list_index - b.list_index) || [],
+            list: data.tasks.filter((t: Task) => t.state === 'doing').sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index),
           },
           done: {
             id: 'done',
             name: 'Finalizado',
-            list: ProcessInfo.tasks
-              .filter((task: Task) => task.state === 'done')
-              .sort((a: Task, b: Task) => a.list_index - b.list_index) || [],
+            list: data.tasks.filter((t: Task) => t.state === 'done').sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index),
           },
         };
 
         setColumns(initialColumns);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    updateProcesses();
+    socket.on("task_moved", (updatedTasks: Task[]) => {
+      console.log("atualizando tasks no front", updatedTasks);
+
+      setColumns(prevColumns => {
+        const newColumns = { ...prevColumns };
+
+        // 1. Crie um mapa com os IDs das tarefas atualizadas
+        const updatedTaskMap = new Map(updatedTasks.map(task => [task.id, task]));
+
+        // 2. Atualize cada coluna mantendo as tarefas que não foram atualizadas
+        Object.keys(newColumns).forEach(colId => {
+            newColumns[colId].list = newColumns[colId].list
+            .filter((task: Task) => !updatedTaskMap.has(task.id)); // remove se for atualizada
+        });
+
+        // 3. Insira as tasks atualizadas na coluna correta
+        updatedTasks.forEach(task => {
+          if (newColumns[task.state]) {
+            newColumns[task.state].list.push(task);
+          }
+        });
+
+        // 4. Reordene por list_index
+        Object.values(newColumns).forEach(col => {
+          col.list.sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index);
+        });
+
+        return newColumns;
+      });
+    });
+
+    loadBoard();
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   async function attBoard(newTitle: string) {
@@ -134,6 +172,10 @@ export default function BoardPage({ params }: any) {
       });
 
       att_tasks([...startList, ...endList]);
+      socket.emit("move_task", {
+        boardId: params.id,
+        tasks: [...startList, ...endList],
+      });
 
       setColumns(prevState => ({
         ...prevState,
@@ -225,15 +267,15 @@ export default function BoardPage({ params }: any) {
                     {member.name[0]}
                   </span>
                   <span className="text-sm font-medium">{member.name} {member.id == board.admin?.id ? "(admin)" : null}</span>
-                  {member.id !== board.admin?.id && (
-                    <button
-                      onClick={() => selectMemberToDelete(member)}
-                      className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition"
-                      aria-label="Remover membro"
-                    >
-                      <IoMdClose size={16} />
-                    </button>
-                  )}
+
+                  <button
+                    onClick={() => selectMemberToDelete(member)}
+                    className="p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition"
+                    aria-label="Remover membro"
+                  >
+                    <IoMdClose size={16} />
+                  </button>
+
                 </div>
               ))}
             </div>

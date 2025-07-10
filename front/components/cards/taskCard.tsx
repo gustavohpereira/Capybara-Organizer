@@ -16,14 +16,17 @@ export default function TaskCard(props: TaskCardProps) {
 
   const handleTaskDelete = async () => {
     const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
-
+    console.log("is confirmed", isConfirmed)
     if (!isConfirmed) {
       return;
     }
-
+    console.log("deletando task")
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/task/${props.task.id}`, {
       method: 'DELETE',
     });
+
+
+    console.log("response",response);
 
     if (response.ok) {
       window.location.reload();

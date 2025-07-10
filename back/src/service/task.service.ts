@@ -21,7 +21,7 @@ export class TaskService {
   }
 
   async updateTask(id: number, taskData: Partial<Task>): Promise<Task | null> {
-    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users'] });
+    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users','board'] });
     if (!task) {
       return null;
     }

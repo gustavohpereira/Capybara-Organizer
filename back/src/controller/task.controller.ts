@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { TaskService } from 'service/task.service';
+import { TaskService } from '../service/task.service';
+import { io } from '../app'; // Adjust the path if your io export is in a different file
 
 export class TaskController {
   public constructor(
@@ -13,16 +14,32 @@ export class TaskController {
   async createTask(req: Request, res: Response) {
     console.log("response", req.body)
     const task = await this.taskService.createTask(req.body);
+
+    // 🔄 Emitir evento via WebSocket para os usuários do board
+    io.to(String(task.board.id)).emit('task_created', task);
+
     res.status(201).json(task);
   }
 
   async updateTask(req: Request, res: Response) {
     const task = await this.taskService.updateTask(Number(req.params.id), req.body);
+
+    console.log("task", task?.id)
+    if(task){
+      io.to(String(task.board.id)).emit('task_updated', task);
+    }
+
     res.json(task);
   }
 
   async deleteTask(req: Request, res: Response) {
+
+    console.log("req.params.id deletando task", req.params.id)
     await this.taskService.deleteTask(Number(req.params.id));
+    console.log("task deleted", req.params.id)
+    // 🔄 Emitir evento via WebSocket para os usuários do board
+    io.to(String(req.body.boardId)).emit('task_deleted', { id: req.params.id });
+
     res.status(204).send();
   }
 

@@ -73,11 +73,19 @@ export class BoardService {
     }
 
     async removeMemberFromBoard(boardId: number, userId: number): Promise<Board | undefined> {
-        const board = await this.boardRepository.findOne({ relations: ['members'], where: { id: boardId } });
+        const board = await this.boardRepository.findOne({ relations: ['members','admin'], where: { id: boardId } });
         const user = await this.userRepository.findOneBy({ id: userId });
-
         if (board && user) {
+            console.log(board,user)
+            if (board.admin && user.id == board.admin.id && board.members.length > 1) {
             board.members = board.members.filter(member => member.id !== user.id);
+            const newAdmin = board.members[0];
+            board.admin = newAdmin;
+            } else {
+            board.members = board.members.filter(member => member.id !== user.id);
+            }
+
+            console.log(board)
             return this.boardRepository.save(board);
         }
 
