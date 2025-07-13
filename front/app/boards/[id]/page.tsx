@@ -99,7 +99,7 @@ export default function BoardPage({ params }: any) {
         // 4. Reordene por list_index
         Object.values(newColumns).forEach(col => {
           col.list.sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index);
-        });
+        }); 
 
         return newColumns;
       });

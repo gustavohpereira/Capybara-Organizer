@@ -30,9 +30,11 @@ export default function AdminPage() {
         verifyUser();
     }, []);
 
-    if (user?.role != "admin") {
-        window.location.href = "/";
-    }
+    useEffect(() => {
+        if (user && user.role !== "admin") {
+            window.location.href = "/";
+        }
+    }, [user]);
 
     return (
         <div className="p-8">
