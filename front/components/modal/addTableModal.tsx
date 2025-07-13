@@ -1,11 +1,12 @@
 import { IoMdClose } from "react-icons/io";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { IUser } from "@/types";
 
-export default function AddTableModal({ closeModal, user }: { closeModal: () => void, user: any }) {
+export default function AddTableModal({ closeModal, user }: { closeModal: () => void, user: IUser }) {
     const [boardName, setBoardName] = useState('');
     const [email, setEmail] = useState('');
-    const [members, setMembers] = useState<any[]>([user]);
+    const [members, setMembers] = useState<IUser[]>([user]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [addingMember, setAddingMember] = useState(false);
@@ -71,7 +72,7 @@ export default function AddTableModal({ closeModal, user }: { closeModal: () => 
         }
     }
 
-    function removeMember(id: string) {
+    function removeMember(id: number) {
         setMembers(members.filter(member => member.id !== id));
     }
 

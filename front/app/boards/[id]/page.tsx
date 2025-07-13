@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Column } from "@/components/boardColumn";
-import { Board, Task } from "@/types";
+import { Board, IUser, Task } from "@/types";
 import AddTaskModal from "@/components/modal/addTaskModal";
 import { CiEdit } from "react-icons/ci";
 import { FaPlus, FaUsers } from "react-icons/fa6";
@@ -12,13 +12,18 @@ import ConfirmDeleteMemberFromTask from "@/components/modal/confirmModal/confirm
 import { IoMdClose } from "react-icons/io";
 import { socket } from "@/functions/socket";
 
+type BoardPageProps = {
+  params: {
+    id: number;
+  };
+};
 
-export default function BoardPage({ params }: any) {
+export default function BoardPage({ params }: BoardPageProps) {
   const [board, setBoard] = useState<Board | null>(null);
   const [isMemberModalOpen, SetIsMemberModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmMemberDeleteModalOpen, setIsConfirmMemberDeleteModalOpen] = useState(false);
-  const [confirmMemberDeleteMember, setconfirmMemberDeleteMember] = useState<any>();
+  const [confirmMemberDeleteMember, setconfirmMemberDeleteMember] = useState<IUser>();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const [columns, setColumns] = useState<{ [key: string]: any }>({
@@ -201,7 +206,7 @@ export default function BoardPage({ params }: any) {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const selectMemberToDelete = (member: any) => {
+  const selectMemberToDelete = (member: IUser) => {
     setconfirmMemberDeleteMember(member);
     setIsConfirmMemberDeleteModalOpen(true);
   };
@@ -214,7 +219,7 @@ export default function BoardPage({ params }: any) {
       {isMemberModalOpen && board && (
         <AddTaskMemberModal closeModal={() => SetIsMemberModalOpen(false)} boardId={Number(board.id)} />
       )}
-      {isConfirmMemberDeleteModalOpen && board && (
+      {isConfirmMemberDeleteModalOpen && board && confirmMemberDeleteMember !== undefined && (
         <ConfirmDeleteMemberFromTask closeModal={() => setIsConfirmMemberDeleteModalOpen(false)} member={confirmMemberDeleteMember} boardId={Number(board.id)} />
       )}
 

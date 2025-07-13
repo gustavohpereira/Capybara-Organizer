@@ -2,13 +2,13 @@ import { IoMdClose } from "react-icons/io";
 import { FaPlus, FaUsers } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
-import { Task } from "@/types";
+import { IUser, Task } from "@/types";
 import { toast, ToastContainer } from "react-toastify";
 
 interface IDetailTaskProps {
   taskData: Task;
   closeModal: () => void;
-  boardMembers: any[];
+  boardMembers: IUser[];
 }
 
 export default function DetailTaskModal({ closeModal, taskData, boardMembers }: IDetailTaskProps) {
@@ -179,7 +179,7 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
               </div>
 
               <ul className="ml-8 list-disc text-gray-700">
-                {taskData.users?.map((member: any, index: number) => (
+                {taskData.users?.map((member: IUser, index: number) => (
                   <li key={index}>{member.name}</li>
                 ))}
 
@@ -187,7 +187,7 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
                   <form onSubmit={addMemberToTask} className="flex gap-2 items-center">
                     <select className="border border-gray-300 p-2 text-lg w-full rounded-md" name="member" id="member">
                       <option value="">Selecione um usuário</option>
-                      {boardMembers.map((member: any) => (
+                      {boardMembers.map((member: IUser) => (
                         <option key={member.id} value={member.id}>
                           {member.name}
                         </option>

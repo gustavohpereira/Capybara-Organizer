@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { IoMdClose } from "react-icons/io";
 import Cookies from "js-cookie";
-export default function BoardCard({ title, numberOfTasks, numberOfMembers, id }: { title: string, numberOfTasks: number, numberOfMembers: number, id: number }) {
+export default function BoardCard({ title, numberOfTasks, numberOfMembers, id }: { title: string, numberOfTasks: number, numberOfMembers: number, id: string }) {
     const router = useRouter();
 
     const handleDeleteBoard = async () => {

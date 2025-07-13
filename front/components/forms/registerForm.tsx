@@ -3,33 +3,40 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
 
-export default function RegisterForm({setLoading}:{setLoading:Function}) {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+type RegisterFormFields = {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    name: string;
+};
+
+export default function RegisterForm({ setLoading }: { setLoading: Function }) {
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormFields>();
     const password = watch('password');  // Assista o campo senha para validação
 
-    const onSubmit = async ({ email, password, confirmPassword, name }: any) => {
+    const onSubmit = async ({ email, password, confirmPassword, name }: RegisterFormFields) => {
         setLoading(true)
 
         if (password !== confirmPassword) {
-            return notify_toasted('As senhas precisam ser iguais','warning');
+            return notify_toasted('As senhas precisam ser iguais', 'warning');
         }
 
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/`, {name, email, password, confirmPassword, role: "user" });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/`, { name, email, password, confirmPassword, role: "user" });
             setLoading(false)
             if (response.status === 201) {
                 window.location.href = "/";
             }
-        } catch (error:any) {
+        } catch (error: any) {
             setLoading(false)
             console.error('Error sending data:', error.message);
         }
     };
 
-     function notify_toasted(message: String,mode:String = 'default') {
-        
-            switch (mode) {
-                case 'success':
+    function notify_toasted(message: String, mode: String = 'default') {
+
+        switch (mode) {
+            case 'success':
                 toast.success(message, {
                     position: "top-center",
                     autoClose: 5000,
@@ -41,7 +48,7 @@ export default function RegisterForm({setLoading}:{setLoading:Function}) {
                     theme: "dark",
                 });
                 break;
-                case 'warning':
+            case 'warning':
                 toast.warning(message, {
                     position: "top-center",
                     autoClose: 5000,
@@ -53,7 +60,7 @@ export default function RegisterForm({setLoading}:{setLoading:Function}) {
                     theme: "dark",
                 });
                 break;
-                case 'error':
+            case 'error':
                 toast.error(message, {
                     position: "top-center",
                     autoClose: 5000,
@@ -65,7 +72,7 @@ export default function RegisterForm({setLoading}:{setLoading:Function}) {
                     theme: "dark",
                 });
                 break;
-                default:
+            default:
                 toast(message, {
                     position: "top-center",
                     autoClose: 5000,
@@ -76,8 +83,8 @@ export default function RegisterForm({setLoading}:{setLoading:Function}) {
                     progress: undefined,
                     theme: "dark",
                 });
-            }
         }
+    }
 
     return (
         <div className="flex justify-center items-center ">

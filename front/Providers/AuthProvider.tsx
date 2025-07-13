@@ -7,7 +7,7 @@ import { useUser } from "./UserProvider";
 // Definindo o tipo para o contexto de autenticação
 interface AuthContextType {
   isAuthenticated: boolean;
-  auth: () => Promise<any>;
+  auth: () => Promise<Function>;
   logout: () => void;
   login: ({ email, password }: { email: string; password: string }) => Promise<any>;
 }

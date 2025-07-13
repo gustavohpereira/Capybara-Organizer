@@ -17,30 +17,34 @@ export default function AddTaskMemberModal({ closeModal, boardId }: { closeModal
         try {
             // Get user by email
             const userRes = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/user/getUserByEmail/${encodeURIComponent(email)}`
+            `${process.env.NEXT_PUBLIC_API_URL}/user/getUserByEmail/${encodeURIComponent(email)}`
             );
             const user = userRes.data;
             if (!user?.id) {
-                setError("Usuário não encontrado.");
-                setLoading(false);
-                return;
+            setError("Usuário não encontrado.");
+            setLoading(false);
+            return;
             }
 
             // Add user to board
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/board/${boardId}/members`, {
-                userId: user.id,
+            userId: user.id,
             });
 
             setSuccess(true);
             setTimeout(() => {
-                closeModal();
-                window.location.reload();
+            closeModal();
+            window.location.reload();
             }, 1000);
-        } catch (err: any) {
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
             setError(
-                err?.response?.data?.message ||
+                err.response?.data?.message ||
                 "Erro ao adicionar membro. Verifique o email e tente novamente."
             );
+            } else {
+            setError("Erro ao adicionar membro. Verifique o email e tente novamente.");
+            }
         } finally {
             setLoading(false);
         }

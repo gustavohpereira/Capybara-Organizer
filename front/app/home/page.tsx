@@ -11,10 +11,12 @@ import { useAuth } from "@/Providers/AuthProvider";
 import { useUser } from "@/Providers/UserProvider";
 import image from '../../images/capybaraError.png'
 import TaskStatisticCards from "@/components/taskStatisticCards";
+import { IBoard } from "../interfaces";
+import { IUser } from "@/types";
 
 
 export default function Home() {
-  const [boards, setBoards] = useState<any>([]);
+  const [boards, setBoards] = useState<IBoard[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -77,15 +79,15 @@ export default function Home() {
         </div>
         <div className="flex justify-start items-start w-[100%] flex-wrap gap-4">
 
-          {boards.filter((board: any) => board.members.some((member: any) => member.id === user?.id)).length === 0 ? (
+          {boards.filter((board: IBoard) => board.members.some((member: IUser) => member.id === user?.id)).length === 0 ? (
             <div className="w-full flex flex-col justify-center items-center py-16">
               <img src={image.src} alt="Nenhuma board encontrada" className="w-24 h-24 mb-4" />
               <span className="text-teal-500 text-lg">Nenhuma board encontrada.</span>
             </div>
           ) : (
             boards
-              .filter((board: any) => board.members.some((member: any) => member.id === user?.id))
-              .map((board: any) => (
+              .filter((board: IBoard) => board.members.some((member: IUser) => member.id === user?.id))
+              .map((board: IBoard) => (
                 <BoardCard key={board.id} title={board.title} numberOfTasks={board.tasks.length} numberOfMembers={board.members.length} id={board.id} />
               ))
           )}

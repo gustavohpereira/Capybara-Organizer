@@ -1,7 +1,8 @@
+import { IUser } from "@/types";
 import axios from "axios";
 import { IoMdClose } from "react-icons/io";
 
-export default function ConfirmDeleteMemberFromTask({closeModal,member,boardId}:{closeModal: () => void,member: any,boardId: number}) {
+export default function ConfirmDeleteMemberFromTask({closeModal,member,boardId}:{closeModal: () => void,member: IUser,boardId: number}) {
 
     async function deleteMemberFromBoard(){
 

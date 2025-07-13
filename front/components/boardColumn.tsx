@@ -1,4 +1,4 @@
-import { Task } from "@/types";
+import { IUser, Task } from "@/types";
 import { Droppable } from "react-beautiful-dnd";
 import TaskCard from "@/components/cards/taskCard";
 
@@ -8,7 +8,7 @@ interface ColumnProps {
     id: string;
     list: Task[];
   };
-  boardMembers: any[];
+  boardMembers: IUser[];
 }
 
 const columnColors: Record<string, string> = {

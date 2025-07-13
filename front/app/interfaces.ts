@@ -5,7 +5,7 @@ export interface ITask {
     createdAt: Date;
     state: 'todo' | 'doing' | 'done';
     board: IBoard;
-    users: any[]; // Replace 'any' with 'User' interface if available
+    users: IUser[]; 
     list_index: number;
 }
 
@@ -24,6 +24,6 @@ export interface IBoard {
   id: string;
   title: string;
   tasks: ITask[];
-  members: any[];
+  members: IUser[];
   admin: { id: number };
 }

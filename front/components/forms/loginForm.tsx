@@ -8,11 +8,16 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 
-export default function LoginForm({setLoading}:{setLoading:Function})  {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const { login } = useAuth();  // Usando o login do contexto de autenticação
+type LoginFormInputs = {
+    email: string;
+    password: string;
+};
 
-    async function onSubmit({ email, password }: any) {
+export default function LoginForm({setLoading}:{setLoading:Function})  {
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
+    const { login } = useAuth();  
+
+    async function onSubmit({ email, password }: LoginFormInputs) {
         setLoading(true);
         const token = await login({ email, password });
         if (token) {

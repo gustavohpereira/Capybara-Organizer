@@ -1,5 +1,5 @@
 export type Task = {
-  users: any;
+  users: IUser[];
   id: number;
   title: string;
   description: string;
@@ -12,7 +12,7 @@ export type Board = {
   id: string;
   title: string;
   tasks: Task[];
-  members: any[];
+  members: IUser[];
   admin: { id: number };
 };
 

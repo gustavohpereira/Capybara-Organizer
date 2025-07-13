@@ -12,6 +12,7 @@ import { createAdminUser } from "./database/seeds/admin.seeds";
 
 import { Server as SocketIOServer } from 'socket.io';
 import http from 'http';
+import { Task } from "entity/task.entity";
 
 require('dotenv').config();
 
@@ -63,7 +64,7 @@ app.use('/statistics', statisticsRouter);
 // Tipagem dos dados do WebSocket
 interface MoveTaskData {
     boardId: string;
-    tasks: any[]; // Substitua 'any' pelo tipo real da Task se tiver
+    tasks: Task[]; 
 }
 
 // Lógica do WebSocket

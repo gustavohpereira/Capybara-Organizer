@@ -1,4 +1,4 @@
-import { Task } from "@/types";
+import { IUser, Task } from "@/types";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import DetailTaskModal from "../modal/detailTaskModal";
@@ -8,7 +8,7 @@ type TaskCardProps = {
   text: string
   index: number
   task: Task
-  members: any[]
+  members: IUser[]
 };
 
 export default function TaskCard(props: TaskCardProps) {
