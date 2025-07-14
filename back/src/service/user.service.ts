@@ -73,13 +73,8 @@ export class UserService {
 
     await this.removeAdminFromBoard(user);
     await this.removeUserFromBoardMembers(user)
-
-
-
-
-    // Excluir o usuário
+ 
     await this.userRepository.delete(id);
-    console.log(`Usuário ${id} excluído com sucesso.`);
   }
 
 

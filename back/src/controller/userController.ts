@@ -108,7 +108,6 @@ export class UserController {
 
       // Deletar o usuário
       await this.userService.deleteUser(userId);
-      console.log(`Usuário ${userId} excluído com sucesso.`);
       res.status(204).send();
     } catch (error: any) {
       console.error(`Erro ao excluir usuário ${userId}:`, error.message);

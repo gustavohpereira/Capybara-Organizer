@@ -4,10 +4,18 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useUser } from "./UserProvider";
 
+
+interface UserType {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  // adicione mais campos conforme necessário
+}
 // Definindo o tipo para o contexto de autenticação
 interface AuthContextType {
   isAuthenticated: boolean;
-  auth: () => Promise<Function>;
+  auth: () => Promise<UserType | null>; 
   logout: () => void;
   login: ({ email, password }: { email: string; password: string }) => Promise<any>;
 }
@@ -18,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { setUser } = useUser();
 
-  const user  = useUser();
+  const user = useUser();
 
   // Função de login
   const login = async ({ email, password }: { email: string; password: string }) => {

@@ -2,9 +2,6 @@
 
 import Image from "next/image";
 import capImage from '../images/capybara.png';
-import { useEffect, useState } from "react";
-import axios from "axios";
-import BoardCard from "./cards/boardCards";
 import Link from "next/link";
 import { IoLogOutOutline } from "react-icons/io5";
 import Cookies from "js-cookie";
