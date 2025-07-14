@@ -16,7 +16,7 @@ export default function TaskStatisticCards({ userId }: TaskStatisticCardsProps) 
     const [stats, setStats] = useState<Stats | null>(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/statistics/getTaskGlobalNumbers/${userId}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/getTaskGlobalNumbers/${userId}`)
             .then((res) => res.json())
             .then((data) => {
                 const stats: Stats = {
