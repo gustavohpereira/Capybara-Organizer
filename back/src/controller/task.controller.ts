@@ -12,7 +12,6 @@ export class TaskController {
   }
 
   async createTask(req: Request, res: Response) {
-    console.log("response", req.body)
     const task = await this.taskService.createTask(req.body);
 
     // 🔄 Emitir evento via WebSocket para os usuários do board

@@ -225,7 +225,7 @@ export default function BoardPage({ params }: BoardPageProps) {
 
       <div className="flex flex-col items-start w-full h-full bg-gray-50 min-h-screen">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 w-full bg-white/90 backdrop-blur border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm">
+        <div className=" w-full bg-white/90 backdrop-blur border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm">
           <div className="flex items-center gap-4">
             {isEditing ? (
               <input

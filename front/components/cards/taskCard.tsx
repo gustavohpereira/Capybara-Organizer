@@ -25,9 +25,6 @@ export default function TaskCard(props: TaskCardProps) {
       method: 'DELETE',
     });
 
-
-    console.log("response",response);
-
     if (response.ok) {
       window.location.reload();
     }

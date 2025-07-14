@@ -2,9 +2,6 @@ import { Request, Response } from 'express';
 import { BoardService } from 'service/Board.service';
 import { UserService } from 'service/user.service';
 
-
-
-
 export class BoardController {
 
     public constructor(
@@ -63,7 +60,10 @@ export class BoardController {
 
   async removeMemberFromBoard(req: Request, res: Response) {
     const board = await this.boardService.removeMemberFromBoard(Number(req.params.boardId), Number(req.body.userId));
+
+    
     if (board) {
+      await this.boardService.deleteUserFromAllBoardTasks(Number(req.body.userId),Number(req.params.boardId));
       res.json(board);
     } else {
       res.status(404).json({ message: 'Board or user not found' });

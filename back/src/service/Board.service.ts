@@ -73,22 +73,42 @@ export class BoardService {
     }
 
     async removeMemberFromBoard(boardId: number, userId: number): Promise<Board | undefined> {
-        const board = await this.boardRepository.findOne({ relations: ['members','admin'], where: { id: boardId } });
+        const board = await this.boardRepository.findOne({ relations: ['members', 'admin'], where: { id: boardId } });
         const user = await this.userRepository.findOneBy({ id: userId });
         if (board && user) {
-            console.log(board,user)
             if (board.admin && user.id == board.admin.id && board.members.length > 1) {
-            board.members = board.members.filter(member => member.id !== user.id);
-            const newAdmin = board.members[0];
-            board.admin = newAdmin;
+                board.members = board.members.filter(member => member.id !== user.id);
+                const newAdmin = board.members[0];
+                board.admin = newAdmin;
             } else {
-            board.members = board.members.filter(member => member.id !== user.id);
+                board.members = board.members.filter(member => member.id !== user.id);
             }
-
-            console.log(board)
             return this.boardRepository.save(board);
         }
 
         return undefined;
+    }
+
+    async deleteUserFromAllBoardTasks(userId: number, boardId:number): Promise<void> {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            return;
+        }
+
+        const board = await this.boardRepository.findOne({
+            where: { id: boardId },
+            relations: ['tasks', 'tasks.users'],
+        });
+        
+        if (board && board.tasks.length > 0) {
+            await this.boardRepository.manager.transaction(async transactionalEntityManager => {
+                for (const task of board.tasks) {
+                    task.users = task.users.filter(u => u.id !== userId);
+                    await transactionalEntityManager.save(task);
+                }
+            });
+        }
+
+
     }
 }

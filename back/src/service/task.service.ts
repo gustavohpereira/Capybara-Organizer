@@ -2,6 +2,7 @@
 import { Repository } from 'typeorm/repository/Repository';
 import { Task } from '../entity/task.entity';
 import { User } from 'entity/user.entity';
+import appDataSource from '../data-source';
 
 export class TaskService {
 
@@ -15,13 +16,12 @@ export class TaskService {
   }
 
   async createTask(taskData: Partial<Task>): Promise<Task> {
-    console.log('RESPONSE', taskData)
     const task = this.taskRepository.create(taskData);
     return this.taskRepository.save(task);
   }
 
   async updateTask(id: number, taskData: Partial<Task>): Promise<Task | null> {
-    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users','board'] });
+    const task = await this.taskRepository.findOne({ where: { id }, relations: ['users', 'board'] });
     if (!task) {
       return null;
     }
