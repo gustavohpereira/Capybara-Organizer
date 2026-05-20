@@ -6,8 +6,6 @@ export async function login({ email, password }: { email: string; password: stri
     try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password });
         if (response.status === 200 && response.data.token) {
-            console.log('Login successful', response.data.token);
-            console.log(response.data.token)
             Cookies.set('token', response.data.token); 
             return response.data.token; 
         }
@@ -26,7 +24,6 @@ export async function getUserInfo(token: string) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(response)
             return response.data;
         }
 

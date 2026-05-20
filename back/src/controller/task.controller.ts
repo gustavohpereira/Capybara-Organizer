@@ -23,7 +23,6 @@ export class TaskController {
   async updateTask(req: Request, res: Response) {
     const task = await this.taskService.updateTask(Number(req.params.id), req.body);
 
-    console.log("task", task?.id)
     if(task){
       io.to(String(task.board.id)).emit('task_updated', task);
     }
@@ -33,9 +32,7 @@ export class TaskController {
 
   async deleteTask(req: Request, res: Response) {
 
-    console.log("req.params.id deletando task", req.params.id)
     await this.taskService.deleteTask(Number(req.params.id));
-    console.log("task deleted", req.params.id)
     // 🔄 Emitir evento via WebSocket para os usuários do board
     io.to(String(req.body.boardId)).emit('task_deleted', { id: req.params.id });
 

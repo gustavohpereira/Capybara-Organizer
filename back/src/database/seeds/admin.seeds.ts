@@ -10,7 +10,6 @@ export async function createAdminUser(dataSource: DataSource) {
 
   const existingAdmin = await userRepository.findOne({ where: { role: "admin" } });
   if (existingAdmin) {
-    console.log("Admin já existe. Nenhuma ação necessária.");
     return;
   }
 
@@ -25,5 +24,4 @@ export async function createAdminUser(dataSource: DataSource) {
   });
 
   await userRepository.save(adminUser);
-  console.log("Usuário admin criado com sucesso!");
 }

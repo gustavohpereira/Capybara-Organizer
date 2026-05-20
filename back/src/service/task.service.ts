@@ -67,7 +67,6 @@ export class TaskService {
     }
     task.users = task.users.filter((user) => user.id !== userId);
 
-    console.log("usuario removido", task)
     return this.taskRepository.save(task);
   }
 

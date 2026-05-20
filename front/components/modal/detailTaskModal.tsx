@@ -36,7 +36,6 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
     }
 
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/task/addMember`, data);
-    console.log('Data sent successfully:', response.data);
 
     closeModal();
     window.location.reload();

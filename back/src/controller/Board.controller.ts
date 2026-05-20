@@ -25,7 +25,6 @@ export class BoardController {
   async createBoard(req: Request, res: Response) {
     const user = await this.userService.getUserById(Number(req.body.userId));
 
-    console.log(req.body)
 
     if (user) {
       const board = await this.boardService.createBoard(req.body, user);

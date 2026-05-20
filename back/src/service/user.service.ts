@@ -68,7 +68,6 @@ export class UserService {
       throw new Error(`Usuário com ID ${id} não encontrado.`);
     }
 
-    console.log('Excluindo usuário:', user);
 
 
     await this.removeAdminFromBoard(user);
@@ -82,13 +81,18 @@ export class UserService {
     try {
       if (user.adminBoards.length > 0) {
         for (const board of user.adminBoards) {
-          console.log(`Limpando admin da board ${board}`);
 
+          // Remove the user from the members list first
           if (board.members && board.members.length > 0) {
             board.members = board.members.filter((member) => member.id !== user.id);
-            board.admin = board.members[0];
+          } else {
+            board.members = [];
           }
-          else {
+
+          // After filtering, reassign admin only if there are remaining members
+          if (board.members && board.members.length > 0) {
+            board.admin = board.members[0];
+          } else {
             board.admin = null;
           }
 
@@ -108,7 +112,6 @@ export class UserService {
         for (const board of user.boards) {
           board.members = board.members.filter((member) => member.id !== user.id);
 
-          console.log(`Removendo usuário ${user.id} da board ${board.id}`);
           await this.boardRepository.save(board);
         }
       }

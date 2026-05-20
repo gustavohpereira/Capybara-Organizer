@@ -39,10 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           logout();
           return null;
         }
-        console.log("Login bem-sucedido", response.data.token);
         Cookies.set("token", response.data.token);
         setIsAuthenticated(true);
-        (console.log("setando o user", userData));
 
         setUser(userData);
         window.location.href = "/home"

@@ -50,13 +50,11 @@ export class BoardService {
     }
 
     async updateBoard(id: number, boardData: Partial<Board>): Promise<Board | null> {
-        console.log("update board", id, boardData);
         await this.boardRepository.update(id, boardData);
         return this.boardRepository.findOne({ relations: ['tasks', 'members'], where: { id: id } });
     }
 
     async deleteBoard(id: number): Promise<void> {
-        console.log(id)
         await this.boardRepository.delete(id);
     }
     async addMemberToBoard(boardId: number, userId: number): Promise<Board | undefined> {

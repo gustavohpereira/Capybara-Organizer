@@ -14,7 +14,6 @@ export default function ConfirmDeleteMemberFromTask({closeModal,member,boardId}:
             
 
             const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/board/${boardId}/members`, { data });
-            console.log('Data sent successfully:', response.data);
             closeModal();
             window.location.reload();	
         }

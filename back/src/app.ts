@@ -38,13 +38,11 @@ app.use(cors({
 
 // Inicialização do banco de dados e start do servidor
 appDataSource.initialize().then(async (connection) => {
-    console.log("✅ Database initialized");
     await connection.runMigrations();
     await createAdminUser(appDataSource);
 
     // Aqui você inicia o servidor HTTP com WebSocket
     server.listen(process.env.PORT, () => {
-        console.log(`🚀 Server + WebSocket running on http://localhost:${process.env.PORT}`);
     });
 }).catch((error) => {
     console.error("❌ Error initializing database", error);
@@ -69,21 +67,17 @@ interface MoveTaskData {
 
 // Lógica do WebSocket
 io.on('connection', (socket) => {
-    console.log('🟢 Novo cliente conectado');
 
     socket.on('join_board', (boardId: string) => {
         socket.join(boardId);
-        console.log(`👤 Cliente entrou no board ${boardId}`);
     });
 
     socket.on('move_task', (data: MoveTaskData) => {
         const { boardId, tasks } = data;
         io.to(boardId).emit('task_moved', tasks);
-        console.log(`🔄 Tarefas movidas no board ${boardId}`);
     });
 
     socket.on('disconnect', () => {
-        console.log('🔴 Cliente desconectado');
     });
 });
 

@@ -80,7 +80,6 @@ export default function BoardPage({ params }: BoardPageProps) {
     };
 
     socket.on("task_moved", (updatedTasks: Task[]) => {
-      console.log("atualizando tasks no front", updatedTasks);
 
       setColumns(prevColumns => {
         const newColumns = { ...prevColumns };

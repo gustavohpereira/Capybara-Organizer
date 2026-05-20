@@ -54,7 +54,6 @@ export class UserController {
         res.status(404).json({ message: 'Usuário não encontrado' });
       }
     } catch (error: any) {
-      console.log(error.message);
       return res.status(403).json({ message: 'Token inválido ou expirado' });
     }
   }
@@ -123,7 +122,6 @@ export class UserController {
       if (user.tasks.length > 0) {
         await Promise.all(
           user.tasks.map(async (task) => {
-            console.log(`Removendo usuário ${user.id} da task ${task.id}`);
             await this.taskService.deleteUserFromTask(task.id, user.id);
           })
         );

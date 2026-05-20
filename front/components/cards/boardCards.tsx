@@ -18,7 +18,6 @@ export default function BoardCard({ title, numberOfTasks, numberOfMembers, id }:
                         'Authorization': `Bearer ${Cookies.get('token')}`
                     }
                 });
-                console.log(response);
                 if (response.ok) {
                     window.location.reload();
                 }
