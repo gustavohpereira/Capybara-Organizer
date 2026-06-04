@@ -109,6 +109,55 @@ export default function BoardPage({ params }: BoardPageProps) {
       });
     });
 
+    //Listener para nova tarefa 
+    socket.on("task_created", (newTask: Task) => {
+      setColumns(prevColumns => {
+        const newColumns = { ...prevColumns };
+        const state = newTask.state;
+
+        if (newColumns[state]) {
+          newColumns[state].list.push(newTask);
+          newColumns[state].list.sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index);
+        }
+
+        return newColumns;
+      });
+    });
+
+    // Listener para tarefa atualizada
+    socket.on("task_updated", (updatedTask: Task) => {
+      setColumns(prevColumns => {
+        const newColumns = { ...prevColumns };
+
+        // Remove tarefa de todas as colunas (pode ter mudado de estado)
+        Object.keys(newColumns).forEach(colId => {
+          newColumns[colId].list = newColumns[colId].list.filter((t: Task) => t.id !== updatedTask.id);
+        });
+
+        // Adiciona na coluna correta
+        if (newColumns[updatedTask.state]) {
+          newColumns[updatedTask.state].list.push(updatedTask);
+          newColumns[updatedTask.state].list.sort((a: { list_index: number; }, b: { list_index: number; }) => a.list_index - b.list_index);
+        }
+
+        return newColumns;
+      });
+    });
+
+    // Listener para tarefa deletada
+    socket.on("task_deleted", (deletedTaskData: { id: string | number }) => {
+      setColumns(prevColumns => {
+        const newColumns = { ...prevColumns };
+
+        // Remove tarefa de todas as colunas
+        Object.keys(newColumns).forEach(colId => {
+          newColumns[colId].list = newColumns[colId].list.filter((t: Task) => t.id !== deletedTaskData.id);
+        });
+
+        return newColumns;
+      });
+    });
+
     loadBoard();
 
     return () => {

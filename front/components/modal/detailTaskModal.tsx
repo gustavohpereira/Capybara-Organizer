@@ -22,23 +22,39 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAddingMemberLoading, setIsAddingMemberLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
 
   async function addMemberToTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsAddingMemberLoading(true);
 
-    const formData = new FormData(event.currentTarget);
-    const userId = formData.get('member');
+    try {
+      const formData = new FormData(event.currentTarget);
+      const userId = formData.get('member');
 
-    const data = {
-      taskId: taskData.id,
-      userId: userId
+      if (!userId) {
+        notify_toasted("Selecione um usuário!", 'warning');
+        setIsAddingMemberLoading(false);
+        return;
+      }
+
+      const data = {
+        taskId: taskData.id,
+        userId: userId
+      }
+
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/task/addMember`, data);
+      
+      notify_toasted("Membro adicionado com sucesso!", 'success');
+      setIsAddingMember(false);
+    } catch (error) {
+      console.error('Erro ao adicionar membro:', error);
+      notify_toasted("Erro ao adicionar membro. Tente novamente.", 'error');
+    } finally {
+      setIsAddingMemberLoading(false);
     }
-
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/task/addMember`, data);
-
-    closeModal();
-    window.location.reload();
   }
 
   async function att_tasks(tasks: Task) {
@@ -57,6 +73,26 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
       notify_toasted("Erro ao atualizar a tarefa.",'error');
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function deleteTask() {
+    const isConfirmed = window.confirm("Tem certeza de que deseja remover esta tarefa? Esta ação não pode ser desfeita.");
+    if (!isConfirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/task/${taskData.id}`);
+
+      notify_toasted("Tarefa removida com sucesso!", 'success');
+      closeModal();
+    } catch (error) {
+      console.error("Erro ao deletar tarefa:", error);
+      notify_toasted("Erro ao remover tarefa. Tente novamente.", 'error');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -184,7 +220,7 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
 
                 {isAddingMember && (
                   <form onSubmit={addMemberToTask} className="flex gap-2 items-center">
-                    <select className="border border-gray-300 p-2 text-lg w-full rounded-md" name="member" id="member">
+                    <select className="border border-gray-300 p-2 text-lg w-full rounded-md" name="member" id="member" disabled={isAddingMemberLoading}>
                       <option value="">Selecione um usuário</option>
                       {boardMembers.map((member: IUser) => (
                         <option key={member.id} value={member.id}>
@@ -193,10 +229,19 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
                       ))}
                     </select>
 
-                    <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2" type="submit">
-                      adicionar
+                    <button 
+                      className={`${isAddingMemberLoading ? 'bg-green-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white py-2 px-4 rounded mt-2`} 
+                      type="submit"
+                      disabled={isAddingMemberLoading}
+                    >
+                      {isAddingMemberLoading ? 'Adicionando...' : 'adicionar'}
                     </button>
-                    <button className=" py-2 px-4 rounded mt-2" type="submit" onClick={() => setIsAddingMember(false)}>
+                    <button 
+                      className="py-2 px-4 rounded mt-2 hover:bg-gray-300" 
+                      type="button"
+                      onClick={() => setIsAddingMember(false)}
+                      disabled={isAddingMemberLoading}
+                    >
                       cancelar
                     </button>
                   </form>
@@ -248,16 +293,12 @@ export default function DetailTaskModal({ closeModal, taskData, boardMembers }: 
           {
             isEditing == false && (
 
-
               <button
-                className="text-red-500 hover:text-red-600"
-                onClick={() => {
-                  if (confirm("Tem certeza de que deseja remover esta tarefa?")) {
-                    // Lógica de remoção
-                  }
-                }}
+                className={`${isDeleting ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:text-red-600'}`}
+                onClick={deleteTask}
+                disabled={isDeleting}
               >
-                Remover
+                {isDeleting ? 'Removendo...' : 'Remover'}
               </button>
             )
           }

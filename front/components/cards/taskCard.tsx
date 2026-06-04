@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import DetailTaskModal from "../modal/detailTaskModal";
 import { IoMdClose } from "react-icons/io";
+import { toast, ToastContainer } from "react-toastify";
 
 type TaskCardProps = {
   text: string
@@ -13,20 +14,47 @@ type TaskCardProps = {
 
 export default function TaskCard(props: TaskCardProps) {
   const [openModal, setOpenModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleTaskDelete = async () => {
     const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
     if (!isConfirmed) {
       return;
     }
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/task/${props.task.id}`, {
-      method: 'DELETE',
-    });
 
-    if (response.ok) {
-      window.location.reload();
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/task/${props.task.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success('Tarefa removida com sucesso!', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+        });
+      } else {
+        throw new Error('Erro ao remover tarefa');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar tarefa:', error);
+      toast.error('Erro ao remover tarefa. Tente novamente.', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+    } finally {
+      setIsDeleting(false);
     }
-
   }
 
   const handleTaskClick = () => {
@@ -57,7 +85,8 @@ export default function TaskCard(props: TaskCardProps) {
                 e.stopPropagation();
                 handleTaskDelete();
               }}
-              className="absolute top-2 right-2 p-1 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition"
+              disabled={isDeleting}
+              className={`absolute top-2 right-2 p-1 rounded-full transition ${isDeleting ? 'text-gray-400 cursor-not-allowed' : 'text-red-500 hover:bg-red-500 hover:text-white'}`}
               aria-label="Remover tarefa"
               tabIndex={-1}
             >
@@ -81,6 +110,7 @@ export default function TaskCard(props: TaskCardProps) {
         )}
       </Draggable>
       {openModal && <DetailTaskModal taskData={props.task} closeModal={() => setOpenModal(false)} boardMembers={props.members} />}
+      <ToastContainer />
     </>
   );
 }

@@ -6,6 +6,7 @@ export type Task = {
   createdAt: Date;
   state: string;
   list_index: number;
+  board?: { id: number } | number;
 };
 
 export type Board = {

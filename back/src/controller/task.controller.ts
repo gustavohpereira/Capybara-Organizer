@@ -31,10 +31,16 @@ export class TaskController {
   }
 
   async deleteTask(req: Request, res: Response) {
+    const taskId = Number(req.params.id);
+    const task = await this.taskService.getTaskById(taskId);
 
-    await this.taskService.deleteTask(Number(req.params.id));
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    await this.taskService.deleteTask(taskId);
     // 🔄 Emitir evento via WebSocket para os usuários do board
-    io.to(String(req.body.boardId)).emit('task_deleted', { id: req.params.id });
+    io.to(String(task.board.id)).emit('task_deleted', { id: taskId });
 
     res.status(204).send();
   }

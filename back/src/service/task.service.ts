@@ -33,6 +33,10 @@ export class TaskService {
     await this.taskRepository.delete(id);
   }
 
+  async getTaskById(id: number): Promise<Task | null> {
+    return this.taskRepository.findOne({ where: { id }, relations: ['board'] });
+  }
+
   async addUserToTask(taskId: number, userId: number): Promise<Task | null> {
     const task = await this.taskRepository.findOne({
       where: { id: taskId },

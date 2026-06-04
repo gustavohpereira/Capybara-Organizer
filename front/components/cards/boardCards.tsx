@@ -9,7 +9,7 @@ export default function BoardCard({ title, numberOfTasks, numberOfMembers, id }:
     const handleDeleteBoard = async () => {
 
         try {
-            const isConfirmed = window.confirm('Tem certeza que deseja remover esta tarefa?');
+            const isConfirmed = window.confirm('Tem certeza que deseja remover esta board?');
             if (isConfirmed) {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/board/${id}`, {
                     method: 'DELETE',
