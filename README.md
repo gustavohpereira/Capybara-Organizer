@@ -14,6 +14,9 @@ Este projeto é um gerenciador de tarefas e boards com APIs REST, autenticação
 
 Ele permite criar/atualizar/excluir usuários, boards, tarefas e estatísticas, além de oferecer comunicação em tempo real via WebSocket para atualização de tarefas em boards.
 
+<img width="1920" height="1080" alt="capybara organizer" src="https://github.com/user-attachments/assets/54c1c100-1a71-44b4-bef0-8003b6a1f8ef" />
+
+
 ### O que ele soluciona
 
 - Facilita o gerenciamento de tarefas em múltiplos boards.
